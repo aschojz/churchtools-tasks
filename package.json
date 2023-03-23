@@ -1,0 +1,49 @@
+{
+    "name": "arnotec-production",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc && vite build",
+        "preview": "vite preview",
+        "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
+        "prettier": "prettier .  --write"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-free": "^6.2.1",
+        "@jsonforms/core": "^3.0.0",
+        "@jsonforms/vue": "^3.0.0",
+        "@jsonforms/vue-vanilla": "^3.0.0",
+        "ajv": "^8.12.0",
+        "axios": "^1.1.3",
+        "pinia": "^2.0.24",
+        "vue": "^3.2.41",
+        "vue-i18n": "^9.2.2",
+        "vue-router": "^4.1.6"
+    },
+    "devDependencies": {
+        "@churchtools/churchtools-client": "^1.2.14",
+        "@types/node": "^18.11.18",
+        "@vitejs/plugin-basic-ssl": "^1.0.1",
+        "@vitejs/plugin-vue": "^3.2.0",
+        "@vue/eslint-config-prettier": "^7.0.0",
+        "@vue/eslint-config-typescript": "^11.0.2",
+        "@vuelidate/core": "^2.0.0",
+        "@vuelidate/validators": "^2.0.0",
+        "autoprefixer": "^10.4.13",
+        "churchtools-styleguide": "git+ssh://git@gitlab.ct-srv.de:2222/churchtools/churchtools-styleguide.git#v0.54.2",
+        "eslint": "^8.27.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-vue": "^9.7.0",
+        "postcss": "^8.4.19",
+        "prettier": "^2.7.1",
+        "sass": "^1.57.1",
+        "tailwindcss": "^3.2.4",
+        "typescript": "^4.6.4",
+        "url": "^0.11.0",
+        "vite": "^3.2.3",
+        "vite-plugin-eslint": "^1.8.1",
+        "vue-tsc": "^1.0.9"
+    }
+}
