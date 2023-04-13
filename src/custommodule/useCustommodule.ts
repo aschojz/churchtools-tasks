@@ -24,9 +24,13 @@ export default function useCustommodule(key: string) {
     const categoryByShorty = (shorty: string) =>
         transformCategory(categoryStore.customdataCategories[shorty]);
 
-    const transformCategory = (category: CustomdataCategory) => ({
-        ...category,
-    });
+    const transformCategory = (category: CustomdataCategory) => {
+        const schema = category.schema ? JSON.parse(category.schema) : {};
+        return {
+            ...schema,
+            ...category,
+        };
+    };
     const createCategory = async (
         payload: Partial<Omit<CustomdataCategory, 'id'>>
     ) => {

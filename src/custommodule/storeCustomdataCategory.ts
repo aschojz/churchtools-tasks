@@ -26,9 +26,10 @@ export const useCustomdataCategoryStore = defineStore(
             payload: CustomdataCategory
         ) => {
             await churchtoolsClient.put(
-                `/custommodules/${moduleId}/customdatacategories/${payload.id}`
+                `/custommodules/${moduleId}/customdatacategories/${payload.id}`,
+                payload
             );
-            customdataCategories.value[payload.id] = payload;
+            customdataCategories.value[payload.shorty] = payload;
         };
         const getCustomdataCategory = async (
             moduleId: number,

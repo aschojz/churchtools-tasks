@@ -1,65 +1,40 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { Button, Input, SelectDropdown } from 'churchtools-styleguide';
-import { useRouter } from 'vue-router';
 import useCustommodule from '../../custommodule/useCustommodule';
 import List from './List.vue';
-import draggable from 'vuedraggable';
-import { sortBy } from 'lodash';
 import { KEY } from '../../main';
+import TaskDialog from './TaskDialog.vue';
+import useTasks from '../../composables/useTasks';
 
-const { createValue, valuesByCategory, valueStore } = useCustommodule(KEY);
-const { currentRoute } = useRouter();
+const { createValue } = useCustommodule(KEY);
+
+const { projectId, lists, tasksByList, taskIsOpen } = useTasks();
 
 const fullscreen = ref(false);
 const onFullscreen = () => {
     fullscreen.value = !fullscreen.value;
 };
 
-const values = computed(
-    () => valuesByCategory.value[currentProjectId.value] ?? []
-);
-
-const tasks = computed<TransformedTask[]>(() =>
-    values.value.filter(
-        (v: TransformedTask | TransformedList) => v.type === 'task'
-    )
-);
-onMounted(() => {
-    initLists();
+const boardlists = computed(() => {
+    const li: TransformedList[] = [...lists.value];
+    li.unshift({
+        id: 0,
+        name: 'Unsortiert',
+        dataCategoryId: projectId.value,
+        sortKey: 0,
+        type: 'list',
+    });
+    return li;
 });
-watch(
-    () => valueStore.loadingState,
-    () => {
-        initLists();
-    }
-);
-const initLists = () => {
-    lists.value = values.value
-        .filter((v: TransformedTask | TransformedList) => v.type === 'list')
-        .map((l: TransformedList) => ({
-            ...l,
-            items: sortBy(tasks.value, sortByRef.value),
-        }));
-};
+
 const sortByRef = ref('sortKey');
 const sortByOptions = [
     { id: 'sortKey', name: 'Manuell' },
     { id: 'dueDate', name: 'Fälligkeit' },
 ];
-const onSort = () => {
-    initLists();
-    console.log('fff');
-};
 
 const bool = () => !!Math.round(Math.random());
-
-const currentProjectId = computed(() => {
-    const id = Array.isArray(currentRoute.value.params.projectId)
-        ? currentRoute.value.params.projectId[0]
-        : currentRoute.value.params.projectId;
-    return parseInt(id);
-});
 
 const createList = () => {
     const i = Math.floor(Math.random() * 100);
@@ -70,15 +45,16 @@ const createList = () => {
         isCollapsed: bool(),
     };
     createValue({
-        dataCategoryId: currentProjectId.value,
+        dataCategoryId: projectId.value,
         value: JSON.stringify(list),
     });
 };
+const onSort = () => {
+    console.log('sort');
+};
 
-const lists = ref<TransformedList[]>([]);
-const drag = ref(false);
-const onMoveEnd = () => {
-    console.log('s');
+const openBoardSettings = () => {
+    alert('TODO: Board settings einstellen');
 };
 </script>
 <template>
@@ -101,9 +77,16 @@ const onMoveEnd = () => {
                 v-model="sortByRef"
                 :options="sortByOptions"
                 emit-id
+                :clear="false"
                 @update:model-value="onSort"
             />
             <Button icon="fas fa-plus" outlined @click="createList"></Button>
+            <Button
+                icon="fas fa-cog"
+                color="gray"
+                outlined
+                @click="openBoardSettings"
+            ></Button>
             <Button
                 outlined
                 color="gray"
@@ -112,17 +95,15 @@ const onMoveEnd = () => {
             ></Button>
         </div>
         <div class="overflow-auto max-w-full flex-grow">
-            <draggable
-                :list="lists"
-                item-key="id"
-                class="flex overflow-x-auto h-full gap-4 p-4"
-                @start="drag = true"
-                @end="onMoveEnd"
-            >
-                <template #item="{ element }">
-                    <List :list="element" />
-                </template>
-            </draggable>
+            <div class="flex overflow-x-auto h-full gap-4 p-4">
+                <List
+                    v-for="list in boardlists"
+                    :key="list.id"
+                    :list="list"
+                    :items="tasksByList[list.id]"
+                />
+            </div>
         </div>
+        <TaskDialog v-if="taskIsOpen" />
     </div>
 </template>

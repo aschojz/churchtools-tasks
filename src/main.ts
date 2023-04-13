@@ -20,13 +20,14 @@ const KEY = 'tasks';
 const app = createApp(App);
 const pinia = createPinia();
 window.ctPinia = pinia;
+window.t = (string) => string;
+app.mixin(mixins);
 app.use(pinia);
 app.use(ctUtils, {
     baseUrl: 'https://churchtools.test',
     pinia,
     t: (e: string) => e,
 });
-app.mixin(mixins);
 app.directive('tippy', () => null);
 app.use(router);
 app.mount('#app');

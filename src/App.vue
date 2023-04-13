@@ -2,11 +2,14 @@
 import { computed } from 'vue';
 import useCustommodule from './custommodule/useCustommodule';
 import useCustommodules from './custommodule/useCustommodules';
+import { useMain } from '@churchtools/utils';
 
 const { loadModule } = useCustommodules();
 const { loadCategories, loadValues, custommodule, values } =
     useCustommodule('tasks');
+const { init } = useMain();
 const initModule = async () => {
+    init();
     await loadModule('tasks');
     await loadCategories();
     await loadValues();

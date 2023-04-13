@@ -1,63 +1,80 @@
 <script setup lang="ts">
-import DialogLarge from '../../components/DialogLarge.vue';
 import {
-    ctsCheckbox,
     Input,
     Button,
     InputDate,
     SelectDropdown,
     Textarea,
+    DialogLarge,
 } from 'churchtools-styleguide';
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import useCustommodule from '../../custommodule/useCustommodule';
 import { useRouter } from 'vue-router';
 import { KEY } from '../../main';
+import useTasks from '../../composables/useTasks';
+import useTags from '../../composables/useTags';
+import TagDialog from './TagDialog.vue';
+import { useDate } from '@churchtools/utils';
 
-const props = defineProps<{
-    task: TransformedTask;
-    create?: boolean;
-}>();
-const emit = defineEmits<{
-    (event: 'save', task: TransformedTask): void;
-    (event: 'close'): void;
-}>();
+const { updateTask, taskId } = useTasks();
+const { tagsArray } = useTags();
 
-const internTask = ref({ ...props.task });
+onMounted(() => {
+    internTask.value = valueById(taskId.value);
+    name.value = internTask.value.name;
+});
+const name = ref('');
+const internTask = ref<TransformedTask>({} as TransformedTask);
 
-const { updateValue, deleteValue, createValue } = useCustommodule(KEY);
-const { currentRoute } = useRouter();
+const { deleteValue, valueById } = useCustommodule(KEY);
+const { currentRoute, push } = useRouter();
 
 const onSave = (close: () => void) => {
-    const projectId = Array.isArray(currentRoute.value.params.projectId)
-        ? currentRoute.value.params.projectId[0]
-        : currentRoute.value.params.projectId;
-    const payload = {
-        ...internTask.value,
-        type: 'task',
-        dataCategoryId: parseInt(projectId),
-    };
-    (props.create ? createValue : updateValue)(payload);
+    updateTask(internTask.value);
     close();
-    emit('save', internTask.value);
+    resetRoute();
 };
 
 const onDelete = (close: () => void) => {
     deleteValue(internTask.value.id);
     close();
-    emit('close');
+    resetRoute();
 };
+const resetRoute = () => {
+    push({ ...currentRoute.value, params: {} });
+};
+
+const createTagIsOpen = ref(false);
+
+const { dateToStringLocale } = useDate();
+const meta = computed(() => {
+    return {
+        createdBy: internTask.value.createdBy,
+        createdDate: dateToStringLocale(
+            new Date(internTask.value.createdDate),
+            true
+        ),
+        modifiedBy: internTask.value.modifiedBy,
+        modifiedDate: dateToStringLocale(
+            new Date(internTask.value.modifiedDate),
+            true
+        ),
+    };
+});
 </script>
 <template>
     <DialogLarge
-        :context="create ? 'Aufgabe erstellen' : 'Aufgabe bearbeiten'"
+        :context="'Aufgabe bearbeiten'"
         :button="{
             disabled: !internTask.name,
-            label: create ? 'Erstellen' : 'Speichern',
+            label: 'Speichern',
         }"
-        @close="emit('close')"
+        @close="resetRoute"
         @save="(e) => onSave(e)"
     >
-        <div v-if="!create" class="text-lg font-bold">{{ task.name }}</div>
+        <div class="text-lg font-bold">
+            {{ name }}
+        </div>
         <div class="flex flex-col gap-4">
             <Input
                 v-model="internTask.name"
@@ -68,21 +85,52 @@ const onDelete = (close: () => void) => {
             <Textarea
                 v-model="internTask.description"
                 label="Beschreibung"
+                horizontal
                 :rows="10"
             />
-            <InputDate v-model="internTask.dueDate" label="Fällig am" />
-            <ctsCheckbox v-model="internTask.allDay" label="ganztägig" />
+            <InputDate
+                v-model="internTask.dueDate"
+                horizontal
+                class="max-w-[520px]"
+                label="Fällig am"
+            />
             <Input v-model="internTask.url" label="Link" horizontal />
-            <SelectDropdown v-model="internTask.tags" multiple label="Tags" />
+            <div class="flex gap-2">
+                <SelectDropdown
+                    v-model="internTask.tags"
+                    horizontal
+                    emit-id
+                    multiple
+                    class="flex-grow"
+                    label="Tags"
+                    :options="tagsArray"
+                />
+                <Button
+                    icon="fas fa-plus"
+                    outlined
+                    @click="createTagIsOpen = true"
+                />
+            </div>
             <SelectDropdown
                 v-model="internTask.assignedTo"
                 multiple
+                horizontal
                 label="Assignee"
             />
             <div>
                 <div>Unteraufgaben</div>
             </div>
+            <div class="flex gap-4">
+                <div class="w-48"></div>
+                <div class="text-ter text-xs">
+                    Zuletzt bearbeitet von {{ meta.modifiedBy }} am
+                    {{ meta.modifiedDate }} — Erstellt von
+                    {{ meta.createdBy }} am
+                    {{ meta.createdDate }}
+                </div>
+            </div>
         </div>
+        <TagDialog v-if="createTagIsOpen" />
         <template #footer-left="{ close }">
             <Button
                 outlined

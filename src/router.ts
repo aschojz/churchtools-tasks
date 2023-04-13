@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Project from './views/project/Project.vue';
-import Board from './views/project/Board.vue';
-import Overview from './views/overview/Overview.vue';
+import Project from '@/views/project/Project.vue';
+import Board from '@/views/project/Board.vue';
+import Overview from '@/views/overview/Overview.vue';
 
 const routes: RouteRecordRaw[] = [
     {
         path: '/:projectId',
         component: Project,
         children: [
-            { path: 'board', name: 'project-board', component: Board },
+            { path: 'board/:taskId?', name: 'project-board', component: Board },
             { path: '', redirect: { name: 'project-board' }, name: 'project' },
         ],
     },
