@@ -2,9 +2,13 @@
 import { Input, DialogSmall, SelectDropdown } from 'churchtools-styleguide';
 import { useColors } from '@churchtools/utils';
 import { computed, ref } from 'vue';
-import useTags from '../../composables/useTags';
+import useTags from '../composables/useTags';
 
 const { ctColors } = useColors();
+
+const emit = defineEmits<{
+    (event: 'close'): void;
+}>();
 
 const colors = computed(() =>
     ctColors.map((c) => ({
@@ -22,7 +26,11 @@ const onSave = (close: () => void) => {
 };
 </script>
 <template>
-    <DialogSmall title="Neuen Tag anlegen" @save="onSave">
+    <DialogSmall
+        title="Neuen Tag anlegen"
+        @close="emit('close')"
+        @save="onSave"
+    >
         <div class="flex flex-col gap-4">
             <Input v-model="tag.name" label="Name" />
             <SelectDropdown

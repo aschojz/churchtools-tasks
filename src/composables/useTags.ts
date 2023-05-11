@@ -1,7 +1,7 @@
 import { computed } from 'vue';
-import useCustommodule from '../custommodule/useCustommodule';
 import { KEY } from '../main';
 import useProjects from './useProjects';
+import useCustommodule from '../custommodule/useCustommodule';
 
 export default function useTags() {
     const { values, createValue, updateValue } = useCustommodule(KEY);
@@ -9,7 +9,8 @@ export default function useTags() {
 
     const tags = computed(() => {
         const tags: TransformedTag[] = values.value.filter(
-            (v: TransformedTag) => v.type === 'tag'
+            (v: TransformedTag) =>
+                v.type === 'tag' && v.dataCategoryId === projectId.value
         );
         return Object.fromEntries(tags.map((tag) => [tag.id, tag]));
     });

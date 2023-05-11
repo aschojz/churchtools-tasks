@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { Button, Input } from 'churchtools-styleguide';
-import useTasks from '../../composables/useTasks';
+import useTasks from '../composables/useTasks';
+import { CustomdataValue } from '@churchtools/utils';
 
 const props = defineProps<{
     list: TransformedList;
 }>();
 const emit = defineEmits<{
     (event: 'close'): void;
+    (event: 'created', value: CustomdataValue): void;
 }>();
 
 const { createTask } = useTasks();
@@ -18,9 +20,12 @@ onMounted(() => {
 });
 
 const task = ref({ list: props.list.id } as Task);
-const onCreateTask = () => {
-    createTask({ ...task.value });
-    resetTask();
+const onCreateTask = async () => {
+    const newTask = await createTask({ ...task.value });
+    if (newTask) {
+        emit('created', newTask);
+        resetTask();
+    }
 };
 const resetTask = () => {
     task.value = {} as TransformedTask;
@@ -29,7 +34,7 @@ const resetTask = () => {
 </script>
 <template>
     <div
-        class="bg-white rounded border flex flex-col gap-2 border-gray-100 shadow-sm justify-between p-3 cursor-pointer transition-colors hover:border-gray-200"
+        class="flex cursor-pointer flex-col justify-between gap-2 rounded border border-gray-100 bg-white p-3 shadow-sm transition-colors hover:border-gray-200"
         @keydown.escape="resetTask"
     >
         <Input

@@ -6,17 +6,19 @@ import { useCustomdataValueStore } from './storeCustomdataValue';
 import { useCustommoduleStore } from './storeCustommodule';
 
 export default function useCustommodule(key: string) {
-    const moduleStore = useCustommoduleStore(window.ctPinia);
-    const categoryStore = useCustomdataCategoryStore(window.ctPinia);
-    const valueStore = useCustomdataValueStore(window.ctPinia);
+    const moduleStore = useCustommoduleStore();
+    const categoryStore = useCustomdataCategoryStore();
+    const valueStore = useCustomdataValueStore();
     // const { errorMessage } = useErrors();
     // const { successToast } = useToasts();
 
-    const custommodule = computed(() =>
-        Object.values(moduleStore.custommodules).find(
+    const custommodule = computed(() => {
+        const mod = Object.values(moduleStore.custommodules).find(
             (ccm) => ccm.shorty === key
-        )
-    );
+        );
+        console.log('module', mod);
+        return mod;
+    });
 
     const categories = computed(() =>
         Object.values(categoryStore.customdataCategories).map(transformCategory)
@@ -108,7 +110,9 @@ export default function useCustommodule(key: string) {
         dataCategoryId: value.dataCategoryId,
     });
     const valueById = (id: string) =>
-        transformValue(valueStore.customdataValues[id]);
+        valueStore.customdataValues[id]
+            ? transformValue(valueStore.customdataValues[id])
+            : undefined;
     const valuesByCategory = computed(() => {
         const valuesByCategory: Record<string, typeof values.value> = {};
         values.value.forEach((v) => {
@@ -121,16 +125,20 @@ export default function useCustommodule(key: string) {
         dataCategoryId: number;
         [x: string]: any;
     }) => {
+        console.log('create', custommodule.value);
         if (custommodule.value?.id === undefined) {
             return;
         }
         const p = { ...payload };
         delete p.dataCategoryId;
         try {
-            await valueStore.createCustomdataValue(custommodule.value.id, {
-                dataCategoryId: payload.dataCategoryId,
-                value: JSON.stringify(p),
-            });
+            return await valueStore.createCustomdataValue(
+                custommodule.value.id,
+                {
+                    dataCategoryId: payload.dataCategoryId,
+                    value: JSON.stringify(p),
+                }
+            );
             // successToast('created');
         } catch (error) {
             // errorMessage(error);

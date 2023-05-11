@@ -4,7 +4,7 @@ import { Custommodule } from '../types';
 import { useCustommoduleStore } from './storeCustommodule';
 
 export default function useCustommodules() {
-    const store = useCustommoduleStore(window.ctPinia);
+    const store = useCustommoduleStore();
     // const { errorMessage } = useErrors();
     // const { successToast } = useToasts();
 

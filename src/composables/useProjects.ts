@@ -1,7 +1,7 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import useCustommodule from '../custommodule/useCustommodule';
 import { KEY } from '../main';
+import useCustommodule from '../custommodule/useCustommodule';
 
 export default function useProjects() {
     const { currentRoute } = useRouter();

@@ -1,31 +1,21 @@
 <script setup lang="ts">
 import { Button, DomainObject } from 'churchtools-styleguide';
-import useProjects from '../../composables/useProjects';
-import ProjectDialog from './ProjectDialog.vue';
-import { ref } from 'vue';
-const { project, projects, deleteProject } = useProjects();
+import useProjects from '../composables/useProjects';
 
-const projectIsOpen = ref<Project>();
+const emit = defineEmits<{
+    (event: 'edit-project', project: Project): void;
+}>();
+const { project, projects, deleteProject } = useProjects();
 </script>
 <template>
-    <div class="grid grid-cols-5 min-h-screen theme-back">
-        <div class="flex flex-col border-r border-gray-300">
-            <div class="flex gap-2 justify-between items-center px-4 py-2">
-                <div class="text-lg font-bold">Aufgabenverwaltung</div>
-                <Button
-                    size="S"
-                    outlined
-                    icon="fas fa-plus"
-                    color="green"
-                    @click="projectIsOpen = {}"
-                />
-            </div>
+    <div class="theme-back grid min-h-screen grid-cols-5">
+        <div class="flex flex-col border-r border-gray-300 pt-4">
             <RouterLink
                 v-for="p in projects"
                 :key="p.shorty"
                 :to="{ name: 'project', params: { projectId: p.id } }"
                 :style="`--active-color: var(--${p.color ?? 'primary'}-50)`"
-                class="px-2 py-2 flex items-center gap-3 justify-between group rounded ml-2 mr-4"
+                class="group ml-2 mr-4 flex items-center justify-between gap-3 rounded px-2 py-2"
             >
                 <DomainObject
                     :style="`--avatar-color: var(--${
@@ -40,13 +30,13 @@ const projectIsOpen = ref<Project>();
                 <div class="flex-grow font-bold">
                     {{ p.name }}
                 </div>
-                <div class="gap-3 hidden group-hover:flex">
+                <div class="hidden gap-3 group-hover:flex">
                     <Button
                         icon="fas fa-cog"
                         size="S"
                         text
                         color="gray"
-                        @click="projectIsOpen = p"
+                        @click="emit('edit-project', p)"
                     />
                     <Button
                         icon="fas fa-trash-alt"
@@ -59,8 +49,8 @@ const projectIsOpen = ref<Project>();
             </RouterLink>
         </div>
         <div class="col-span-4 flex flex-col">
-            <div class="px-4 pt-3 flex flex-col gap-2">
-                <div class="flex gap-3 items-center text-lg font-bold">
+            <div class="flex flex-col gap-2 px-4 pt-3">
+                <div class="flex items-center gap-3 text-lg font-bold">
                     <i
                         :class="project?.icon"
                         :style="`color: var(--${project?.color}-500)`"
@@ -69,17 +59,12 @@ const projectIsOpen = ref<Project>();
                         {{ project?.name }}
                     </div>
                 </div>
-                <div v-if="project.description" class="text-sec">
+                <div v-if="project?.description" class="text-sec">
                     {{ project.description }}
                 </div>
             </div>
             <RouterView />
         </div>
-        <ProjectDialog
-            v-if="projectIsOpen"
-            :project="projectIsOpen"
-            @close="projectIsOpen = undefined"
-        />
     </div>
 </template>
 <style scoped>

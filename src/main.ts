@@ -9,27 +9,31 @@ import { createPinia } from 'pinia';
 import { ctUtils } from '@churchtools/utils';
 import { router } from './router';
 
-churchtoolsClient.setBaseUrl('https://churchtools.test');
-await churchtoolsClient.post('/login', {
-    username: 'churchtools',
-    password: 'churchtools',
-});
+const baseUrl = window.settings?.base_url ?? 'https://churchtools.test';
+churchtoolsClient.setBaseUrl(baseUrl);
 
 const KEY = 'tasks';
 
 const app = createApp(App);
 const pinia = createPinia();
-window.ctPinia = pinia;
-window.t = (string) => string;
+
 app.mixin(mixins);
 app.use(pinia);
 app.use(ctUtils, {
-    baseUrl: 'https://churchtools.test',
+    baseUrl,
     pinia,
-    t: (e: string) => e,
+    t: window.t ?? ((e: string) => e),
 });
 app.directive('tippy', () => null);
 app.use(router);
 app.mount('#app');
+
+if (import.meta.env.MODE === 'development') {
+    await churchtoolsClient.post('/login', {
+        username: 'churchtools',
+        password: 'churchtools',
+    });
+    window.t = (string) => string;
+}
 
 export { KEY };

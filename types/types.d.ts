@@ -17,23 +17,27 @@ interface Task {
     description?: string;
     url?: string;
     dueDate?: string;
+    dueDateRelative?: number;
     allDay?: boolean;
+    activity?: ActivityEntry[];
     sortKey: number;
     list?: number;
     tags?: number[];
     assignedTo?: number[];
     subTasks?: number[];
-    comments?: number[];
-    createdBy: number;
-    createdDate: string;
-    modifiedBy: number;
-    modifiedDate: string;
+    comments?: ActivityEntry[];
 }
 interface Tag {
     type: 'tag';
     name: string;
     color: string;
     sortKey: number;
+}
+interface ActivityEntry {
+    personId: number;
+    date: string;
+    type: 'create' | 'fullfilled' | 'comment' | 'update';
+    value?: any;
 }
 
 type TransformedTag = Tag & { id: number; dataCategoryId: number };

@@ -16,6 +16,7 @@ export const useCustomdataValueStore = defineStore('customdataValue', () => {
             payload
         );
         customdataValues.value[result.id] = result;
+        return result;
     };
     const updateCustomdataValue = async (
         moduleId: number,

@@ -6,7 +6,7 @@ import {
     SelectDropdown,
 } from 'churchtools-styleguide';
 import { ref, computed } from 'vue';
-import useProjects from '../../composables/useProjects';
+import useProjects from '../composables/useProjects';
 import { useColors } from '@churchtools/utils';
 
 const props = defineProps<{

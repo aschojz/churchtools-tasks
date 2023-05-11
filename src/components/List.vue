@@ -1,27 +1,33 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import useCustommodule from '../../custommodule/useCustommodule';
+import { computed, onMounted, ref, watch } from 'vue';
 import Task from './TaskItem.vue';
 import draggable from 'vuedraggable';
 import { Button, Tag } from 'churchtools-styleguide';
-import { KEY } from '../../main';
+import { KEY } from '../main';
 import NewTask from './NewTask.vue';
-import useLists from '../../composables/useLists';
+import useLists from '../composables/useLists';
+import { taskStore } from '../composables/storeTasks';
+import { sortBy } from 'lodash';
+import useTasks from '../composables/useTasks';
+import useCustommodule from '../custommodule/useCustommodule';
 
 const { updateValues, updateValue } = useCustommodule(KEY);
+const store = taskStore();
 
 const props = withDefaults(
     defineProps<{
         list: TransformedList;
         items: TransformedTask[];
+        showTask?: boolean;
+        isDraggable?: boolean;
     }>(),
-    { items: () => [] }
+    { items: () => [], isDraggable: true }
 );
 
 watch(
     () => props.items,
     () => {
-        internItems.value = [...props.items];
+        initItems(props.items);
     }
 );
 
@@ -32,7 +38,19 @@ const onUpdateList = (list: Partial<TaskList>) => {
 
 const newTaskIsOpen = ref(false);
 
-const internItems = ref(props.items);
+const initItems = (items: TransformedTask[]) => {
+    internItems.value = items.map((item) => ({
+        ...item,
+        dueDate: calculateDueDate(item),
+    }));
+};
+onMounted(() => initItems(props.items));
+const internItems = ref();
+const { calculateDueDate } = useTasks();
+const sortedItems = computed(() => {
+    console.log(store.sortBy);
+    return sortBy(internItems.value, store.sortBy);
+});
 const onMoveEnd = () => {
     const newValues: TransformedTask[] = [];
     internItems.value.forEach((item, index) => {
@@ -58,18 +76,18 @@ const onTaskDrop = ({
 </script>
 <template>
     <div
-        class="bg-gray-50 shadow-md rounded-lg p-2 flex-shrink-0 flex flex-col"
-        :class="list.isCollapsed ? 'w-12 min-h-[300px] ' : 'w-96'"
+        class="flex flex-shrink-0 flex-col rounded-lg bg-gray-50 p-2 shadow-md"
+        :class="list.isCollapsed ? 'min-h-[300px] w-12 ' : 'w-96'"
     >
         <div
             :class="{
-                'mb-3 flex gap-2 justify-between items-center':
+                'mb-3 flex items-center justify-between gap-2':
                     !list.isCollapsed,
-                'flex flex-col items-center min-h-96 gap-2': list.isCollapsed,
+                'min-h-96 flex flex-col items-center gap-2': list.isCollapsed,
             }"
         >
             <button
-                class="bg-gray-50 text-gray-400 rounded h-6 flex items-center justify-center w-6 flex-shrink-0 my-auto"
+                class="my-auto flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-gray-50 text-gray-400"
                 :class="{ 'm-2': list.isCollapsed }"
                 @click="onUpdateList({ isCollapsed: !list.isCollapsed })"
             >
@@ -79,16 +97,16 @@ const onTaskDrop = ({
                 ></i>
                 <i v-else class="fas fa-angle-right relative top-px"></i>
             </button>
-            <div class="inline-flex overflow-hidden items-center flex-grow">
+            <div class="inline-flex flex-grow items-center overflow-hidden">
                 <span
-                    class="text-xl font-bold whitespace-nowrap text-ellipsis overflow-hidden"
+                    class="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap text-xl font-bold"
                     :style="
                         list.isCollapsed
                             ? 'margin: calc(50% - 8px) 0; transform: rotate(90deg)'
                             : ''
                     "
                 >
-                    {{ list.name }}
+                    <slot name="header" :list="list">{{ list.name }}</slot>
                 </span>
             </div>
             <div class="inline-flex">
@@ -106,7 +124,7 @@ const onTaskDrop = ({
                         icon="fas fa-tasks"
                         color="secondary"
                         size="0"
-                        :label="internItems?.length"
+                        :label="String(internItems?.length)"
                     />
                     <Button
                         v-if="!list.isCollapsed"
@@ -125,24 +143,33 @@ const onTaskDrop = ({
                 </span>
             </div>
         </div>
-        <div v-if="!list.isCollapsed" class="flex flex-col gap-2 flex-grow">
+        <div v-if="!list.isCollapsed" class="flex flex-grow flex-col gap-2">
             <NewTask
                 v-if="newTaskIsOpen"
                 :list="list"
                 @close="newTaskIsOpen = false"
             />
             <draggable
-                :list="internItems"
+                v-if="isDraggable"
+                :list="sortedItems"
                 item-key="id"
                 group="tasks"
-                class="flex flex-col gap-2 min-h-full"
+                class="flex min-h-full flex-col gap-2"
                 @change="onTaskDrop"
                 @end="onMoveEnd"
             >
                 <template #item="{ element }">
-                    <Task :item="element" />
+                    <Task :item="element" :show-task="showTask" />
                 </template>
             </draggable>
+            <template v-else>
+                <Task
+                    v-for="item in sortedItems"
+                    :key="item.id"
+                    :item="item"
+                    :show-task="showTask"
+                />
+            </template>
         </div>
     </div>
 </template>

@@ -1,55 +1,69 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import useCustommodule from './custommodule/useCustommodule';
+import { Button } from 'churchtools-styleguide';
+import { tx } from '@churchtools/utils';
+import { computed, ref } from 'vue';
+import ProjectDialog from './components/ProjectDialog.vue';
+import { KEY } from './main';
 import useCustommodules from './custommodule/useCustommodules';
-import { useMain } from '@churchtools/utils';
+import useCustommodule from './custommodule/useCustommodule';
 
 const { loadModule } = useCustommodules();
-const { loadCategories, loadValues, custommodule, values } =
-    useCustommodule('tasks');
-const { init } = useMain();
+const { loadCategories, loadValues } = useCustommodule(KEY);
 const initModule = async () => {
-    init();
-    await loadModule('tasks');
+    await loadModule(KEY);
     await loadCategories();
     await loadValues();
-
-    // if (categoryByShorty('pro') === undefined) {
-    //     createCategory({
-    //         shorty: 'pro',
-    //         name: 'Projekt',
-    //         description: 'Oberste Ebene der Aufgabenverwaltung',
-    //         customModuleId: custommodule.value.id,
-    //         securityLevelId: 1,
-    //         schema: '',
-    //     });
-    // }
-    // if (categoryByShorty('list') === undefined) {
-    //     createCategory({
-    //         shorty: 'list',
-    //         name: 'Aufgabenliste',
-    //         description:
-    //             'Zweite Ebene der Aufgabenverwaltung, Listen von Aufgaben',
-    //         customModuleId: custommodule.value.id,
-    //         securityLevelId: 1,
-    //         schema: '',
-    //     });
-    // }
-    // if (categoryByShorty('task') === undefined) {
-    //     createCategory({
-    //         shorty: 'task',
-    //         name: 'Aufgabe',
-    //         description: 'Aufgaben-Issue',
-    //         customModuleId: custommodule.value.id,
-    //         securityLevelId: 1,
-    //         schema: '',
-    //     });
-    // }
 };
 initModule();
+const onNewProject = () => (projectIsOpen.value = {} as Project);
+const projectIsOpen = ref<Project>();
+const isDev = computed(() => import.meta.env.MODE === 'development');
 </script>
 <template>
-    <RouterView></RouterView>
+    <div v-if="isDev" class="h-14 w-full bg-primary-900"></div>
+    <div class="bg-back flex h-screen flex-col">
+        <div
+            class="theme-border bg-front flex w-full items-center justify-between gap-6 border-0 border-b border-solid px-6 py-3.5 text-lg"
+        >
+            <div class="flex flex-grow gap-6 divide-x font-bold">
+                <div class="flex h-7 items-baseline gap-4">
+                    <router-link
+                        style="--color-link: var(--theme-text)"
+                        class="flex h-7 items-baseline gap-4 hover:no-underline"
+                        to="/"
+                    >
+                        <i
+                            class="fas fa-tasks text-ter w-6 text-center text-base"
+                        ></i>
+                        <span>{{ tx('Aufgabenverwaltung') }}</span>
+                    </router-link>
+                    <Tag
+                        class="text-base font-normal"
+                        color="violet"
+                        label="Beta"
+                        size="M"
+                    />
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="bg-border h-6 w-px"></div>
+                <Button
+                    size="S"
+                    icon="fas fa-plus"
+                    color="green"
+                    @click="onNewProject"
+                >
+                    {{ tx('Neues Projekt') }}
+                </Button>
+            </div>
+        </div>
+        <RouterView @edit-project="projectIsOpen = $event"></RouterView>
+    </div>
+    <ProjectDialog
+        v-if="projectIsOpen"
+        :project="projectIsOpen"
+        @close="projectIsOpen = undefined"
+    />
 </template>
 <style>
 html {
@@ -57,5 +71,9 @@ html {
 }
 body {
     font-size: 1.4rem;
+    --color-link: var(--theme-text);
+}
+#app a:hover {
+    text-decoration: none;
 }
 </style>

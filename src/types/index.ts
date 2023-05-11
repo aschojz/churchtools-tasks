@@ -592,15 +592,42 @@ export type PersonDomainObjectType = GeneralDomainObjectType<
     }
 >;
 
-export type ImageDomainObjectType = GeneralDomainObjectType<'image', Record<string, never>>;
-export type GroupDomainObjectType = GeneralDomainObjectType<'group', { note: string }>;
-export type SongDomainObjectType = GeneralDomainObjectType<'song', Record<string, never>>;
-export type WikiDomainObjectType = GeneralDomainObjectType<'wiki', Record<string, never>>;
-export type WikiPageDomainObjectType = GeneralDomainObjectType<'wiki_page', { wikiCategoryId: number }>;
-export type LogoDomainObjectType = GeneralDomainObjectType<'logo', Record<string, never>>;
-export type FileDomainObjectType = GeneralDomainObjectType<'file', Record<string, never>>;
-export type CalendarDomainObjectType = GeneralDomainObjectType<'calendar', { campusName: string }>;
-export type GroupHomepageDomainObjectType = GeneralDomainObjectType<'grouphomepage', { childGroupIds: number[] }>;
+export type ImageDomainObjectType = GeneralDomainObjectType<
+    'image',
+    Record<string, never>
+>;
+export type GroupDomainObjectType = GeneralDomainObjectType<
+    'group',
+    { note: string }
+>;
+export type SongDomainObjectType = GeneralDomainObjectType<
+    'song',
+    Record<string, never>
+>;
+export type WikiDomainObjectType = GeneralDomainObjectType<
+    'wiki',
+    Record<string, never>
+>;
+export type WikiPageDomainObjectType = GeneralDomainObjectType<
+    'wiki_page',
+    { wikiCategoryId: number }
+>;
+export type LogoDomainObjectType = GeneralDomainObjectType<
+    'logo',
+    Record<string, never>
+>;
+export type FileDomainObjectType = GeneralDomainObjectType<
+    'file',
+    Record<string, never>
+>;
+export type CalendarDomainObjectType = GeneralDomainObjectType<
+    'calendar',
+    { campusName: string }
+>;
+export type GroupHomepageDomainObjectType = GeneralDomainObjectType<
+    'grouphomepage',
+    { childGroupIds: number[] }
+>;
 
 export type DomainObjectType =
     | PersonDomainObjectType
@@ -668,7 +695,12 @@ export interface Group {
         visibility: 'hidden' | 'public' | 'restricted' | 'intern';
         waitinglistMaxPersons: number;
     };
-    followUp: { commentViewerId: number; id: number; name: string; nameTranslated: string };
+    followUp: {
+        commentViewerId: number;
+        id: number;
+        name: string;
+        nameTranslated: string;
+    };
     roles: MemberRole[];
 }
 
@@ -1011,7 +1043,8 @@ const fieldTypeCode = [
     'radioselect',
 ] as const;
 export type FieldTypeCode = (typeof fieldTypeCode)[number];
-export const isFieldTypeCode = (x: FieldTypeCode): x is FieldTypeCode => fieldTypeCode.includes(x);
+export const isFieldTypeCode = (x: FieldTypeCode): x is FieldTypeCode =>
+    fieldTypeCode.includes(x);
 
 const fieldCategoryCode = [
     'f_group',
@@ -1023,7 +1056,9 @@ const fieldCategoryCode = [
     'f_datasecurity',
 ] as const;
 export type FieldCategoryCode = (typeof fieldCategoryCode)[number];
-export const isFieldCategoryCode = (x: FieldCategoryCode): x is FieldCategoryCode => fieldCategoryCode.includes(x);
+export const isFieldCategoryCode = (
+    x: FieldCategoryCode
+): x is FieldCategoryCode => fieldCategoryCode.includes(x);
 
 export interface BasicField {
     id: number;
@@ -1102,9 +1137,18 @@ export interface PermissionResult {
         };
         hideUserRights: boolean;
         modulename: 'churchcore';
-        modules: ['churchcore', 'churchdb', 'churchcal', 'churchresource', 'churchservice', 'churchcheckin'];
+        modules: [
+            'churchcore',
+            'churchdb',
+            'churchcal',
+            'churchresource',
+            'churchservice',
+            'churchcheckin'
+        ];
         names: unknown;
-        person: { [id: number]: { auth: AuthObject; bezeichnung: string; id: string } };
+        person: {
+            [id: number]: { auth: AuthObject; bezeichnung: string; id: string };
+        };
         publiccalendar_name: 'Gemeindekalender';
         status: {
             [id: number]: {
@@ -1235,7 +1279,9 @@ export interface Campus extends BaseMasterdata {
 
 export interface GroupHomepage {
     defaultView: 'tile' | 'minitile' | 'list';
-    filter: GroupHomepageFilter<Weekday | AgeGroup | TargetGroup | GroupCategory | Campus>[];
+    filter: GroupHomepageFilter<
+        Weekday | AgeGroup | TargetGroup | GroupCategory | Campus
+    >[];
     groups: Omit<PublicGroup, 'signUpPersons'>[];
     id: number;
     isEnabled: boolean;
@@ -1319,7 +1365,10 @@ export interface PublicGroup {
         rolesSetInGroup: boolean;
     };
     signUpHeadline: string;
-    signUpPersons: { person: PersonDomainObjectType; status: 'NOT_CLICKED' | 'IN_GROUP' | 'REQUESTED' }[];
+    signUpPersons: {
+        person: PersonDomainObjectType;
+        status: 'NOT_CLICKED' | 'IN_GROUP' | 'REQUESTED';
+    }[];
 }
 
 export interface Device {
