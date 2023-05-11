@@ -12,7 +12,6 @@ export default function useTask(taskId: ComputedRef<number> | Ref<number>) {
     const { projectId } = useProjects();
 
     const task = computed(() => {
-        console.log('tasksObject', tasksObject.value, taskId.value);
         return tasksObject.value[taskId.value] ?? {};
     });
 
@@ -60,7 +59,6 @@ export default function useTask(taskId: ComputedRef<number> | Ref<number>) {
 
     const { tags } = useTags();
     const sortedTags = computed(() => {
-        console.log('tags', task.value.tags, tags.value);
         const tt = (task.value?.tags ?? [])
             ?.map((t) => tags.value[t])
             .filter((t) => !!t);

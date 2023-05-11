@@ -36,7 +36,6 @@ export default function useTasks() {
         }));
     });
     const tasksObject = computed(() => {
-        console.log(tasks.value);
         return Object.fromEntries(tasks.value.map((t) => [t.id, t]));
     });
     const lists = computed(() => {

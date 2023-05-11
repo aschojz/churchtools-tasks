@@ -48,7 +48,6 @@ onMounted(() => initItems(props.items));
 const internItems = ref();
 const { calculateDueDate } = useTasks();
 const sortedItems = computed(() => {
-    console.log(store.sortBy);
     return sortBy(internItems.value, store.sortBy);
 });
 const onMoveEnd = () => {

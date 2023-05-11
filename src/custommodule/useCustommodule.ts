@@ -16,7 +16,6 @@ export default function useCustommodule(key: string) {
         const mod = Object.values(moduleStore.custommodules).find(
             (ccm) => ccm.shorty === key
         );
-        console.log('module', mod);
         return mod;
     });
 
@@ -125,7 +124,6 @@ export default function useCustommodule(key: string) {
         dataCategoryId: number;
         [x: string]: any;
     }) => {
-        console.log('create', custommodule.value);
         if (custommodule.value?.id === undefined) {
             return;
         }
