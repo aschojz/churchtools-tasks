@@ -1,11 +1,11 @@
+import { useMain, usePersons } from '@churchtools/utils';
+import { isEqual } from 'lodash';
 import { computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { KEY } from '../main';
-import { useMain, usePersons } from '@churchtools/utils';
-import useProjects from './useProjects';
-import { isEqual } from 'lodash';
-import { taskStore } from './storeTasks';
 import useCustommodule from '../custommodule/useCustommodule';
+import { KEY } from '../main';
+import { taskStore } from './storeTasks';
+import useProjects from './useProjects';
 
 export default function useTasks() {
     const { currentRoute } = useRouter();
@@ -133,44 +133,32 @@ export default function useTasks() {
     const findParent = (t: TransformedTask) =>
         tasks.value.find((task) => task.subTasks?.includes(t?.id));
 
-    const calculateDueDate = (t: TransformedTask) => {
-        if (t?.dueDate) {
-            return t.dueDate;
-        }
-        const parent = findParent(t);
-        if (t && parent) {
-            const { relative, date } = getCombinedDueDates(
-                t,
-                t.dueDateRelative ?? 0
-            );
-            if (date && t.dueDateRelative !== undefined) {
-                const d = new Date(date);
-                d.setDate(d.getDate() - relative);
-                return d.toISOString();
+    const calculateDueDate = (t: TransformedTask): Date | undefined => {
+        let dueDate = t.dueDate ? new Date(t.dueDate) : undefined;
+
+        if (t.dueDateRelative) {
+            const parentTask = findParent(t);
+
+            if (parentTask) {
+                const parentDueDate = calculateDueDate(parentTask);
+                if (parentDueDate) {
+                    dueDate = new Date(
+                        parentDueDate.getTime() -
+                            t.dueDateRelative * 24 * 60 * 60 * 1000
+                    );
+                }
             }
         }
-        return undefined;
+        return dueDate;
     };
 
-    const getCombinedDueDates = (
-        t: TransformedTask,
-        days: number
-    ): { relative: number; date?: string } => {
-        let d = days,
-            dueDate: undefined | string = undefined;
+    const getSuperParent = (t: TransformedTask): TransformedTask => {
         const parent = findParent(t);
-        if (parent?.dueDateRelative) {
-            d += +parent.dueDateRelative;
+        if (parent) {
+            return getSuperParent(parent);
         }
-        dueDate = parent?.dueDate;
-        if (parent && findParent(parent)) {
-            const { date, relative } = getCombinedDueDates(parent, d);
-            d = relative;
-            dueDate = date;
-        }
-        return { relative: d, date: dueDate };
+        return t;
     };
-
     return {
         projectId,
         taskId,
@@ -185,5 +173,6 @@ export default function useTasks() {
         getObjectDiff,
         calculateDueDate,
         findParent,
+        getSuperParent,
     };
 }

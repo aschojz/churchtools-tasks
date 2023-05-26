@@ -1,13 +1,22 @@
 <script setup lang="ts">
+import { sortBy } from 'lodash';
 import { computed } from 'vue';
+import TaskItem from '../components/TaskItem.vue';
+import { taskStore } from '../composables/storeTasks';
 import useTasks from '../composables/useTasks';
 import ViewWrapper from './ViewWrapper.vue';
-import TaskItem from '../components/TaskItem.vue';
 
-const { tasks, showTask } = useTasks();
-const filteredTasks = computed(() =>
-    tasks.value.filter((task) => showTask(task))
-);
+const { tasks, showTask, calculateDueDate } = useTasks();
+
+const store = taskStore();
+
+const filteredTasks = computed(() => {
+    const filtered = tasks.value.filter((task) => showTask(task));
+    return sortBy(
+        filtered.map((t) => ({ ...t, dueDate: calculateDueDate(t) })),
+        store.sortBy
+    );
+});
 </script>
 <template>
     <ViewWrapper>

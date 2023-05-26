@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import {
-    Input,
-    DialogLarge,
-    Textarea,
-    SelectDropdown,
-} from 'churchtools-styleguide';
-import { ref, computed } from 'vue';
-import useProjects from '../composables/useProjects';
 import { useColors } from '@churchtools/utils';
+import {
+    DialogLarge,
+    Input,
+    SelectDropdown,
+    Textarea,
+} from 'churchtools-styleguide';
+import { computed, ref } from 'vue';
+import useProjects from '../composables/useProjects';
 
 const props = defineProps<{
     project: Project;
@@ -16,13 +16,13 @@ const emit = defineEmits<{
     (event: 'close'): void;
 }>();
 
-const project = ref(props.project);
+const proj = ref(props.project);
 
 const { ctColors } = useColors();
 const colors = computed(() =>
     ctColors.map((c) => ({
         id: c.key,
-        name: c.key,
+        label: c.key,
         color: c,
         icon: 'fas fa-circle',
     }))
@@ -30,7 +30,7 @@ const colors = computed(() =>
 
 const { createProject, updateProject } = useProjects();
 const onSave = (close: () => void) => {
-    (props.project.id ? updateProject : createProject)(project.value);
+    (props.project.id ? updateProject : createProject)(proj.value);
     close();
 };
 </script>
@@ -41,11 +41,15 @@ const onSave = (close: () => void) => {
         @close="emit('close')"
     >
         <div class="flex flex-col gap-4">
-            <Input v-model="project.name" label="Name" />
-            <Textarea v-model="project.description" label="Beschreibung" />
-            <Input v-model="project.icon" label="Icon" />
+            <Input v-model="proj.name" label="Name" />
+            <Textarea v-model="proj.description" label="Beschreibung" />
+            <Input
+                v-model="proj.icon"
+                label="Icon"
+                note="Eine FontAwesome Klasse z.B. fas fa-user"
+            />
             <SelectDropdown
-                v-model="project.color"
+                v-model="proj.color"
                 :options="colors"
                 emit-id
                 label="Farbe"

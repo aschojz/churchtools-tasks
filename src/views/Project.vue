@@ -27,10 +27,12 @@ const { project, projects, deleteProject } = useProjects();
                         icon: p.icon ?? 'fas fa-th-large',
                     }"
                 />
-                <div class="flex-grow font-bold">
+                <div
+                    class="flex-grow overflow-hidden text-ellipsis whitespace-nowrap font-bold"
+                >
                     {{ p.name }}
                 </div>
-                <div class="hidden gap-3 group-hover:flex">
+                <div class="hidden gap-1 group-hover:flex">
                     <Button
                         icon="fas fa-cog"
                         size="S"

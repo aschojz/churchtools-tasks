@@ -1,13 +1,13 @@
-import { createApp } from 'vue';
-import './assets/fontawesome/css/all.css';
-import './style.css';
-import './ct.css';
-import App from './App.vue';
-import { mixins } from './utils/mixins';
 import { churchtoolsClient } from '@churchtools/churchtools-client';
-import { createPinia } from 'pinia';
 import { ctUtils } from '@churchtools/utils';
+import { createPinia } from 'pinia';
+import { createApp } from 'vue';
+import App from './App.vue';
+import './assets/fontawesome/css/all.css';
+import './ct.css';
 import { router } from './router';
+import './style.css';
+import { mixins } from './utils/mixins';
 
 const baseUrl = window.settings?.base_url ?? 'https://churchtools.test';
 churchtoolsClient.setBaseUrl(baseUrl);

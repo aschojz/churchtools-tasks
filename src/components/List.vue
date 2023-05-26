@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
-import Task from './TaskItem.vue';
-import draggable from 'vuedraggable';
 import { Button, Tag } from 'churchtools-styleguide';
-import { KEY } from '../main';
-import NewTask from './NewTask.vue';
-import useLists from '../composables/useLists';
-import { taskStore } from '../composables/storeTasks';
 import { sortBy } from 'lodash';
+import { computed, onMounted, ref, watch } from 'vue';
+import draggable from 'vuedraggable';
+import { taskStore } from '../composables/storeTasks';
+import useLists from '../composables/useLists';
 import useTasks from '../composables/useTasks';
 import useCustommodule from '../custommodule/useCustommodule';
+import { KEY } from '../main';
+import NewTask from './NewTask.vue';
+import Task from './TaskItem.vue';
 
 const { updateValues, updateValue } = useCustommodule(KEY);
 const store = taskStore();
@@ -45,7 +45,9 @@ const initItems = (items: TransformedTask[]) => {
     }));
 };
 onMounted(() => initItems(props.items));
-const internItems = ref();
+const internItems = ref<(TransformedTask & { dueDate: string | undefined })[]>(
+    []
+);
 const { calculateDueDate } = useTasks();
 const sortedItems = computed(() => {
     return sortBy(internItems.value, store.sortBy);
@@ -131,13 +133,6 @@ const onTaskDrop = ({
                         size="S"
                         outlined
                         @click="newTaskIsOpen = !newTaskIsOpen"
-                    />
-                    <Button
-                        v-if="!list.isCollapsed"
-                        icon="fas fa-cog"
-                        color="gray"
-                        size="S"
-                        outlined
                     />
                 </span>
             </div>

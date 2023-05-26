@@ -4,14 +4,16 @@ import { ref } from 'vue';
 import { CustomdataValue, LoadingState } from '../types';
 
 export const useCustomdataValueStore = defineStore('customdataValue', () => {
-    const customdataValues = ref<Record<string, CustomdataValue>>({});
+    const customdataValues = ref<
+        Record<CustomdataValue['id'], CustomdataValue>
+    >({});
     const loadingState = ref<LoadingState>('IDLE');
 
     const createCustomdataValue = async (
         moduleId: number,
         payload: Partial<Omit<CustomdataValue, 'id'>>
     ) => {
-        const result: CustomdataValue = await churchtoolsClient.post(
+        const result = await churchtoolsClient.post<CustomdataValue>(
             `/custommodules/${moduleId}/customdatavalues`,
             payload
         );
@@ -32,10 +34,10 @@ export const useCustomdataValueStore = defineStore('customdataValue', () => {
         moduleId: number,
         payloads: CustomdataValue[]
     ) => {
-        const promises: Promise<void>[] = [];
+        const promises: Promise<CustomdataValue>[] = [];
         payloads.forEach(async (payload) => {
             promises.push(
-                await churchtoolsClient.put(
+                churchtoolsClient.put<CustomdataValue>(
                     `/custommodules/${moduleId}/customdatavalues/${payload.id}`,
                     payload
                 )
@@ -46,8 +48,11 @@ export const useCustomdataValueStore = defineStore('customdataValue', () => {
             customdataValues.value[payload.id] = payload;
         });
     };
-    const getCustomdataValue = async (moduleId: number, valueId: number) => {
-        const result: CustomdataValue = await churchtoolsClient.get(
+    const getCustomdataValue = async (
+        moduleId: number,
+        valueId: CustomdataValue['id']
+    ) => {
+        const result = await churchtoolsClient.get<CustomdataValue>(
             `/custommodules/${moduleId}/customdatavalues/${valueId}`
         );
         customdataValues.value[valueId] = result;
@@ -55,7 +60,7 @@ export const useCustomdataValueStore = defineStore('customdataValue', () => {
     const getCustomdataValues = async (moduleId: number) => {
         try {
             loadingState.value = 'LOADING';
-            const result: CustomdataValue[] = await churchtoolsClient.get(
+            const result = await churchtoolsClient.get<CustomdataValue[]>(
                 `/custommodules/${moduleId}/customdatavalues`
             );
             customdataValues.value = Object.fromEntries(
@@ -68,7 +73,7 @@ export const useCustomdataValueStore = defineStore('customdataValue', () => {
     };
     const deleteCustomdataValues = async (
         moduleId: number,
-        valueId: number
+        valueId: CustomdataValue['id']
     ) => {
         await churchtoolsClient.deleteApi(
             `/custommodules/${moduleId}/customdatavalues/${valueId}`

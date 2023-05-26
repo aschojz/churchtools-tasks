@@ -21,7 +21,7 @@ const isDev = computed(() => import.meta.env.MODE === 'development');
 </script>
 <template>
     <div v-if="isDev" class="h-14 w-full bg-primary-900"></div>
-    <div class="bg-back flex h-screen flex-col">
+    <div id="tasks" class="bg-back flex flex-col">
         <div
             class="theme-border bg-front flex w-full items-center justify-between gap-6 border-0 border-b border-solid px-6 py-3.5 text-lg"
         >
@@ -46,6 +46,15 @@ const isDev = computed(() => import.meta.env.MODE === 'development');
                 </div>
             </div>
             <div class="flex items-center gap-4">
+                <Button
+                    icon="fas fa-bug"
+                    outlined
+                    size="S"
+                    color="violet"
+                    target="_blank"
+                    href="https://github.com/aschojz/churchtools-tasks/issues"
+                    >Fehler melden</Button
+                >
                 <div class="bg-border h-6 w-px"></div>
                 <Button
                     size="S"
@@ -75,5 +84,8 @@ body {
 }
 #app a:hover {
     text-decoration: none;
+}
+#tasks {
+    min-height: calc(100vh - 56px);
 }
 </style>

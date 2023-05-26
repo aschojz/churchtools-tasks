@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { Custommodule, LoadingState } from '../types';
 
 export const useCustommoduleStore = defineStore('custommodule', () => {
-    const custommodules = ref<Record<string, Custommodule>>({});
+    const custommodules = ref<Record<Custommodule['id'], Custommodule>>({});
     const loadingState = ref<LoadingState>('IDLE');
 
     const createCustommodule = async (
@@ -22,14 +22,16 @@ export const useCustommoduleStore = defineStore('custommodule', () => {
         custommodules.value[result.id] = result;
     };
     const updateCustommodule = async (payload: Custommodule) => {
-        await churchtoolsClient.put(`/custommodules/${payload.id}`);
+        await churchtoolsClient.put(`/custommodules/${payload.id}`, payload);
         custommodules.value[payload.id] = payload;
     };
-    const getCustommodule = async (id: number | string) => {
+    const getCustommodule = async (
+        id: Custommodule['shorty'] | Custommodule['id']
+    ) => {
         const result: Custommodule = await churchtoolsClient.get(
             `/custommodules/${id}`
         );
-        custommodules.value[id] = result;
+        custommodules.value[result.id] = result;
     };
     const getCustommodules = async () => {
         try {
@@ -45,7 +47,7 @@ export const useCustommoduleStore = defineStore('custommodule', () => {
             loadingState.value = 'ERROR';
         }
     };
-    const deleteCustommodule = async (id: number) => {
+    const deleteCustommodule = async (id: Custommodule['id']) => {
         await churchtoolsClient.deleteApi(`/custommodules/${id}`);
         delete custommodules.value[id];
     };

@@ -3,6 +3,7 @@ interface Project {
     description?: string;
     color?: string;
     icon?: string;
+    id: number;
 }
 interface TaskList {
     type: 'list';

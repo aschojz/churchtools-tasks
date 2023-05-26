@@ -1,14 +1,15 @@
-import { ComputedRef, Ref, computed } from 'vue';
-import useProjects from './useProjects';
-import useTasks from './useTasks';
-import { usePersons, useMain } from '@churchtools/utils';
-import useTags from './useTags';
+import { useMain, usePersons } from '@churchtools/utils';
 import { sortBy } from 'lodash';
-import { KEY } from '../main';
+import { ComputedRef, Ref, computed } from 'vue';
 import useCustommodule from '../custommodule/useCustommodule';
+import { KEY } from '../main';
+import useProjects from './useProjects';
+import useTags from './useTags';
+import useTasks from './useTasks';
 
 export default function useTask(taskId: ComputedRef<number> | Ref<number>) {
-    const { tasksObject, findParent, calculateDueDate } = useTasks();
+    const { tasksObject, findParent, calculateDueDate, getSuperParent } =
+        useTasks();
     const { projectId } = useProjects();
 
     const task = computed(() => {
@@ -30,6 +31,8 @@ export default function useTask(taskId: ComputedRef<number> | Ref<number>) {
         }
         return parent;
     });
+
+    const superParent = computed(() => getSuperParent(task.value));
 
     const hasSubTasks = computed(
         () =>
@@ -129,6 +132,7 @@ export default function useTask(taskId: ComputedRef<number> | Ref<number>) {
         toggleTask,
         deleteTask,
         toDayMonth,
+        superParent,
         calculateDueDate,
         percentFullfilled,
     };

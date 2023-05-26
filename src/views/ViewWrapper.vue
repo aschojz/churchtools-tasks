@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { Button, Input, Toggle } from 'churchtools-styleguide';
-import { KEY } from '../main';
+import { ref } from 'vue';
 import TaskDialog from '../components/taskDialog/TaskDialog.vue';
-import useTasks from '../composables/useTasks';
 import { taskStore } from '../composables/storeTasks';
+import useTasks from '../composables/useTasks';
 import useCustommodule from '../custommodule/useCustommodule';
+import { KEY } from '../main';
 
 const { createValue } = useCustommodule(KEY);
 const { projectId, taskIsOpen } = useTasks();
@@ -47,7 +47,8 @@ const store = taskStore();
     <div
         class="flex w-full flex-grow flex-col"
         :class="{
-            'fixed left-0 top-0 h-screen w-screen bg-gray-100': fullscreen,
+            'fixed left-0 top-0 z-[2000] h-screen w-screen bg-gray-100':
+                fullscreen,
         }"
     >
         <div
@@ -61,11 +62,6 @@ const store = taskStore();
                     class="flex-grow"
                 />
                 <slot name="actions">
-                    <Button
-                        icon="fas fa-plus"
-                        outlined
-                        @click="createList"
-                    ></Button>
                     <Button
                         icon="fas fa-cog"
                         color="gray"
@@ -82,7 +78,9 @@ const store = taskStore();
             </div>
             <div class="flex justify-between">
                 <div class="tabs flex gap-1">
-                    <RouterLink :to="{ name: 'project-board' }"
+                    <RouterLink
+                        v-tippy="'Sortiert nach benutzerdefinierten Listen'"
+                        :to="{ name: 'project-board' }"
                         >Board</RouterLink
                     >
                     <RouterLink :to="{ name: 'project-list' }"

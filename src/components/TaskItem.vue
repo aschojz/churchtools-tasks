@@ -17,7 +17,7 @@ const props = defineProps<{
 
 const id = computed(() => props.item.id);
 const {
-    parent,
+    superParent,
     hasSubTasks,
     percentFullfilled,
     assignees,
@@ -26,6 +26,7 @@ const {
     toggleTask,
     comments,
     deleteTask,
+    task,
     sortedTags,
     toDayMonth,
 } = useTask(id);
@@ -90,10 +91,10 @@ const contextMenu = computed(() => [
         @click="openTask"
     >
         <div
-            v-if="parent && !showTask"
+            v-if="superParent && !showTask"
             class="-mb-1 flex gap-2 text-xs text-gray-400"
         >
-            <span>{{ parent.name }}</span>
+            <span>{{ superParent.name }}</span>
             <i class="fas fa-arrow-turn-up fa-rotate-270"></i>
         </div>
         <div class="flex items-start justify-end gap-4">
@@ -146,14 +147,18 @@ const contextMenu = computed(() => [
                     v-if="dueDate"
                     icon="far fa-clock"
                     size="S"
-                    :color="dueColor"
-                    :label="toDayMonth(dueDate)"
+                    :color="dueColor ?? 'gray'"
+                    :label="
+                        task.dueDateRelative
+                            ? `${toDayMonth(dueDate)} (${task.dueDateRelative})`
+                            : toDayMonth(dueDate)
+                    "
                 />
                 <Tag
                     v-if="comments?.length"
                     icon="far fa-comments"
                     size="0"
-                    :label="comments?.length"
+                    :label="String(comments.length)"
                 />
                 <Button
                     v-if="item.url"

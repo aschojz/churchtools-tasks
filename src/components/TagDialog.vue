@@ -13,7 +13,7 @@ const emit = defineEmits<{
 const colors = computed(() =>
     ctColors.map((c) => ({
         id: c.key,
-        name: c.key,
+        label: c.key,
         color: c,
         icon: 'fas fa-circle',
     }))

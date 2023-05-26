@@ -6,13 +6,13 @@ import { CustomdataCategory, LoadingState } from '../types';
 export const useCustomdataCategoryStore = defineStore(
     'customdataCategory',
     () => {
-        const customdataCategories = ref<Record<string, CustomdataCategory>>(
-            {}
-        );
+        const customdataCategories = ref<
+            Record<CustomdataCategory['shorty'], CustomdataCategory>
+        >({});
         const loadingState = ref<LoadingState>('IDLE');
 
         const createCustomdataCategory = async (
-            moduleId: number,
+            moduleId: CustomdataCategory['customModuleId'],
             payload: Partial<Omit<CustomdataCategory, 'id'>>
         ) => {
             const result: CustomdataCategory = await churchtoolsClient.post(
@@ -22,7 +22,7 @@ export const useCustomdataCategoryStore = defineStore(
             customdataCategories.value[result.shorty] = result;
         };
         const updateCustomdataCategory = async (
-            moduleId: number,
+            moduleId: CustomdataCategory['customModuleId'],
             payload: CustomdataCategory
         ) => {
             await churchtoolsClient.put(
@@ -32,15 +32,17 @@ export const useCustomdataCategoryStore = defineStore(
             customdataCategories.value[payload.shorty] = payload;
         };
         const getCustomdataCategory = async (
-            moduleId: number,
-            catId: number
+            moduleId: CustomdataCategory['customModuleId'],
+            catId: CustomdataCategory['id']
         ) => {
             const result: CustomdataCategory = await churchtoolsClient.get(
                 `/custommodules/${moduleId}/customdatacategories/${catId}`
             );
             customdataCategories.value[result.shorty] = result;
         };
-        const getCustomdataCategories = async (moduleId: number) => {
+        const getCustomdataCategories = async (
+            moduleId: CustomdataCategory['customModuleId']
+        ) => {
             try {
                 loadingState.value = 'LOADING';
                 const result: CustomdataCategory[] =
@@ -57,8 +59,8 @@ export const useCustomdataCategoryStore = defineStore(
             }
         };
         const deleteCustomdataCategory = async (
-            moduleId: number,
-            catId: number
+            moduleId: CustomdataCategory['customModuleId'],
+            catId: CustomdataCategory['id']
         ) => {
             await churchtoolsClient.deleteApi(
                 `/custommodules/${moduleId}/customdatacategories/${catId}`
