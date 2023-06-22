@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Tag } from 'churchtools-styleguide';
+import { Button, DropdownMenu, Tag } from 'churchtools-styleguide';
 import { sortBy } from 'lodash';
 import { computed, onMounted, ref, watch } from 'vue';
 import draggable from 'vuedraggable';
@@ -12,7 +12,7 @@ import ListDialog from './ListDialog.vue';
 import NewTask from './NewTask.vue';
 import Task from './TaskItem.vue';
 
-const { updateValues, updateValue } = useCustommodule(KEY);
+const { updateValues, updateValue, deleteValue } = useCustommodule(KEY);
 const store = taskStore();
 
 const props = withDefaults(
@@ -34,7 +34,11 @@ watch(
 
 const { updateList } = useLists();
 const onUpdateList = (list: Partial<TaskList>) => {
-    updateList({ ...props.list, ...list });
+    if (props.list.id !== 0) {
+        updateList({ ...props.list, ...list });
+    } else {
+        store.unsortedList.isCollapsed = !store.unsortedList.isCollapsed;
+    }
 };
 
 const newTaskIsOpen = ref(false);
@@ -51,7 +55,7 @@ const internItems = ref<(TransformedTask & { dueDate: string | undefined })[]>(
 );
 const { calculateDueDate } = useTasks();
 const sortedItems = computed(() => {
-    return sortBy(internItems.value, store.sortBy);
+    return sortBy(internItems.value, store.search ? 'score' : store.sortBy);
 });
 const onMoveEnd = () => {
     const newValues: TransformedTask[] = [];
@@ -76,6 +80,31 @@ const onTaskDrop = ({
     }
 };
 
+const listContextMenu = computed(() => {
+    const menu = [
+        {
+            title: `Liste "${props.list.name}"`,
+            items: [
+                {
+                    id: 'edit',
+                    label: 'Bearbeiten',
+                    icon: 'fas fa-pen',
+                    callback: () => (listIsOpen.value = props.list),
+                },
+                {
+                    id: 'delete',
+                    label: 'Löschen',
+                    icon: {
+                        icon: 'fas fa-trash-alt',
+                        class: 'text-red-500',
+                    },
+                    callback: () => deleteValue(props.list.id),
+                },
+            ],
+        },
+    ];
+    return menu;
+});
 const listIsOpen = ref();
 </script>
 <template>
@@ -133,18 +162,23 @@ const listIsOpen = ref();
                     />
                     <Button
                         v-if="!list.isCollapsed"
-                        icon="fas fa-cog"
-                        size="S"
-                        outlined
-                        @click="listIsOpen = list"
-                    />
-                    <Button
-                        v-if="!list.isCollapsed"
                         icon="fas fa-plus"
                         size="S"
                         outlined
                         @click="newTaskIsOpen = !newTaskIsOpen"
                     />
+                    <DropdownMenu
+                        v-if="list.id !== 0"
+                        :menu-items="listContextMenu"
+                    >
+                        <Button
+                            v-if="!list.isCollapsed"
+                            icon="fas fa-ellipsis-h"
+                            size="S"
+                            text
+                            color="gray"
+                        />
+                    </DropdownMenu>
                 </span>
             </div>
         </div>
@@ -152,11 +186,6 @@ const listIsOpen = ref();
             v-if="!list.isCollapsed"
             class="flex flex-grow flex-col gap-2 overflow-y-auto px-2 pb-2"
         >
-            <NewTask
-                v-if="newTaskIsOpen"
-                :list="list"
-                @close="newTaskIsOpen = false"
-            />
             <draggable
                 v-if="isDraggable"
                 :list="sortedItems"
@@ -166,12 +195,24 @@ const listIsOpen = ref();
                 @change="onTaskDrop"
                 @end="onMoveEnd"
             >
+                <template #header>
+                    <NewTask
+                        v-if="newTaskIsOpen"
+                        :list="list"
+                        @close="newTaskIsOpen = false"
+                    />
+                </template>
                 <template #item="{ element }">
                     <Task :item="element" :show-task="showTask" />
                 </template>
                 <template #footer><div class="pt-px"></div></template>
             </draggable>
             <template v-else>
+                <NewTask
+                    v-if="newTaskIsOpen"
+                    :list="list"
+                    @close="newTaskIsOpen = false"
+                />
                 <Task
                     v-for="item in sortedItems"
                     :key="item.id"

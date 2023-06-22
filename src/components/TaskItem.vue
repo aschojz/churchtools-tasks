@@ -21,6 +21,7 @@ const props = defineProps<{
 const id = computed(() => props.item.id);
 const {
     superParent,
+    parent,
     hasSubTasks,
     percentFullfilled,
     assignees,
@@ -96,6 +97,7 @@ const deleteRecursive = (task: TransformedTask) => {
 
 const contextMenu = computed(() => [
     {
+        title: `Aufgabe "${props.item.name}"`,
         items: [
             {
                 id: 'fullfilled',
@@ -143,6 +145,17 @@ const contextMenu = computed(() => [
         ],
     },
 ]);
+
+const breadcrumbs = computed(() => {
+    const bc = [];
+    if (superParent.value) {
+        bc.push(superParent.value.name);
+    }
+    if (parent.value && parent.value.id !== superParent.value?.id) {
+        bc.push(parent.value.name);
+    }
+    return bc;
+});
 </script>
 <template>
     <div
@@ -151,10 +164,16 @@ const contextMenu = computed(() => [
     >
         <div
             v-if="superParent && !showTask"
-            class="-mb-1 flex gap-2 text-xs text-gray-400"
+            class="-mb-1 flex items-center gap-2 text-xs text-gray-400"
         >
-            <span>{{ superParent.name }}</span>
-            <i class="fas fa-arrow-turn-up fa-rotate-270"></i>
+            <template v-for="(crumb, index) in breadcrumbs" :key="index">
+                <span>{{ crumb }}</span>
+                <i
+                    v-if="index === breadcrumbs.length - 1"
+                    class="fas fa-arrow-turn-up fa-rotate-270"
+                ></i>
+                <i v-else class="fas fa-arrow-left-long"></i>
+            </template>
         </div>
         <div class="flex items-start justify-end gap-4">
             <div class="flex flex-grow items-start gap-2">

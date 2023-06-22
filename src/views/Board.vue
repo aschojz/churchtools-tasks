@@ -3,27 +3,27 @@ import { computed } from 'vue';
 import List from '../components/List.vue';
 import useTasks from '../composables/useTasks';
 import ViewWrapper from './ViewWrapper.vue';
+import { taskStore } from '../composables/storeTasks';
 
-const { projectId, lists, tasks, showTask } = useTasks();
+const { lists, transformedTasks, showTask } = useTasks();
+const store = taskStore();
 
 const boardlists = computed(() => {
     const li: TransformedList[] = [...lists.value];
-    li.unshift({
-        id: 0,
-        name: 'Unsortiert',
-        dataCategoryId: projectId.value,
-        sortKey: 0,
-        type: 'list',
-    });
+    li.unshift(store.unsortedList as TransformedList);
     return li;
 });
 
 const tasksByList = computed(() => {
     const items: Record<number, TransformedTask[]> = {};
-    tasks.value.forEach((task) => {
+    const existingLists = boardlists.value.map((l) => l.id);
+    transformedTasks.value.forEach((task) => {
         if (showTask(task)) {
-            items[task.list ?? 0] ??= [];
-            items[task.list ?? 0].push(task);
+            const listId = existingLists.includes(task.list ?? 0)
+                ? task.list ?? 0
+                : 0;
+            items[listId] ??= [];
+            items[listId].push(task);
         }
     });
     return items;

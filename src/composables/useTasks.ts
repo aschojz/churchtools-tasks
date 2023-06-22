@@ -1,4 +1,5 @@
 import { useMain, usePersons } from '@churchtools/utils';
+import Fuse from 'fuse.js';
 import { isEqual } from 'lodash';
 import { computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -27,12 +28,16 @@ export default function useTasks() {
     );
 
     const tasks = computed<TransformedTask[]>(() => {
-        const tasks = values.value.filter(
+        const tasks: TransformedTask[] = values.value.filter(
             (v: TransformedTask | TransformedList) => v.type === 'task'
         );
-        return tasks.map((task) => ({
+        return tasks;
+    });
+    const transformedTasks = computed(() => {
+        return tasks.value.map((task) => ({
             ...task,
-            parent: tasks.find((t) => t.subTasks?.includes(task.id))?.id,
+            parent: tasks.value.find((t) => t.subTasks?.includes(task.id))?.id,
+            score: tasksInSearch.value[task.id]?.score,
         }));
     });
     const tasksObject = computed(() => {
@@ -122,8 +127,35 @@ export default function useTasks() {
         }, Object.keys(obj2));
     };
 
+    const tasksInSearch = computed(() => {
+        if (store.search) {
+            const fuse = new Fuse(tasks.value, {
+                includeScore: true,
+                minMatchCharLength: 2,
+                threshold: 0.4,
+                keys: [
+                    'name',
+                    { name: 'description', weight: 0.5 },
+                    { name: 'url', weight: 0.3 },
+                ],
+            });
+            return Object.fromEntries(
+                fuse
+                    .search(store.search)
+                    .map((task) => [
+                        task.item.id,
+                        { ...task.item, score: task.score },
+                    ])
+            );
+        }
+        return Object.fromEntries(
+            tasks.value.map((task) => [task.id, { ...task, score: undefined }])
+        );
+    });
+
     const showTask = (task: TransformedTask) => {
         return (
+            tasksInSearch.value[task.id] &&
             ((!store.showFullfilled && !task.fullfilled) ||
                 store.showFullfilled) &&
             ((!store.showSubTasks && !task.parent) || store.showSubTasks)
@@ -174,5 +206,6 @@ export default function useTasks() {
         calculateDueDate,
         findParent,
         getSuperParent,
+        transformedTasks,
     };
 }

@@ -39,10 +39,12 @@ const listIsOpen = ref(false);
         >
             <div class="flex gap-2 py-4">
                 <Input
+                    v-model="store.search"
                     label="Suche"
                     :show-label="false"
                     placeholder="Suchen"
                     class="flex-grow"
+                    clear
                 />
                 <slot name="actions">
                     <Button
