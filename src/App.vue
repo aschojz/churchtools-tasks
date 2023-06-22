@@ -75,11 +75,8 @@ const isDev = computed(() => import.meta.env.MODE === 'development');
     />
 </template>
 <style>
-html {
-    font-size: 62.5%;
-}
 body {
-    font-size: 1.4rem;
+    font-size: 14px;
     --color-link: var(--theme-text);
 }
 #app a:hover {

@@ -8,6 +8,7 @@ import useLists from '../composables/useLists';
 import useTasks from '../composables/useTasks';
 import useCustommodule from '../custommodule/useCustommodule';
 import { KEY } from '../main';
+import ListDialog from './ListDialog.vue';
 import NewTask from './NewTask.vue';
 import Task from './TaskItem.vue';
 
@@ -74,13 +75,16 @@ const onTaskDrop = ({
         });
     }
 };
+
+const listIsOpen = ref();
 </script>
 <template>
     <div
-        class="flex flex-shrink-0 flex-col rounded-lg bg-gray-50 p-2 shadow-md"
+        class="flex max-h-[700px] flex-shrink-0 flex-col rounded-lg bg-gray-50 shadow-md"
         :class="list.isCollapsed ? 'min-h-[300px] w-12 ' : 'w-96'"
     >
         <div
+            class="px-2 pt-2"
             :class="{
                 'mb-3 flex items-center justify-between gap-2':
                     !list.isCollapsed,
@@ -129,6 +133,13 @@ const onTaskDrop = ({
                     />
                     <Button
                         v-if="!list.isCollapsed"
+                        icon="fas fa-cog"
+                        size="S"
+                        outlined
+                        @click="listIsOpen = list"
+                    />
+                    <Button
+                        v-if="!list.isCollapsed"
                         icon="fas fa-plus"
                         size="S"
                         outlined
@@ -137,7 +148,10 @@ const onTaskDrop = ({
                 </span>
             </div>
         </div>
-        <div v-if="!list.isCollapsed" class="flex flex-grow flex-col gap-2">
+        <div
+            v-if="!list.isCollapsed"
+            class="flex flex-grow flex-col gap-2 overflow-y-auto px-2 pb-2"
+        >
             <NewTask
                 v-if="newTaskIsOpen"
                 :list="list"
@@ -155,6 +169,7 @@ const onTaskDrop = ({
                 <template #item="{ element }">
                     <Task :item="element" :show-task="showTask" />
                 </template>
+                <template #footer><div class="pt-px"></div></template>
             </draggable>
             <template v-else>
                 <Task
@@ -165,6 +180,11 @@ const onTaskDrop = ({
                 />
             </template>
         </div>
+        <ListDialog
+            v-if="listIsOpen"
+            :list="listIsOpen"
+            @close="listIsOpen = undefined"
+        />
     </div>
 </template>
 <style>

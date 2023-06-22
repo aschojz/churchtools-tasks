@@ -32,7 +32,9 @@ export default function useTask(taskId: ComputedRef<number> | Ref<number>) {
         return parent;
     });
 
-    const superParent = computed(() => getSuperParent(task.value));
+    const superParent = computed(
+        () => findParent(task.value) && getSuperParent(task.value)
+    );
 
     const hasSubTasks = computed(
         () =>

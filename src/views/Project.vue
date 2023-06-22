@@ -8,7 +8,7 @@ const emit = defineEmits<{
 const { project, projects, deleteProject } = useProjects();
 </script>
 <template>
-    <div class="theme-back grid min-h-screen grid-cols-5">
+    <div class="theme-back grid flex-grow grid-cols-5">
         <div class="flex flex-col border-r border-gray-300 pt-4">
             <RouterLink
                 v-for="p in projects"

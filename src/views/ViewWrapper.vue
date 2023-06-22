@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { Button, Input, Toggle } from 'churchtools-styleguide';
 import { ref } from 'vue';
+import ListDialog from '../components/ListDialog.vue';
 import TaskDialog from '../components/taskDialog/TaskDialog.vue';
 import { taskStore } from '../composables/storeTasks';
 import useTasks from '../composables/useTasks';
-import useCustommodule from '../custommodule/useCustommodule';
-import { KEY } from '../main';
 
-const { createValue } = useCustommodule(KEY);
-const { projectId, taskIsOpen } = useTasks();
+const { taskIsOpen } = useTasks();
 
 withDefaults(
     defineProps<{
@@ -22,26 +20,11 @@ const onFullscreen = () => {
     fullscreen.value = !fullscreen.value;
 };
 
-const bool = () => !!Math.round(Math.random());
-
-const createList = () => {
-    const i = Math.floor(Math.random() * 100);
-    const list: TaskList = {
-        type: 'list',
-        name: `Liste ${i}`,
-        sortKey: i,
-        isCollapsed: bool(),
-    };
-    createValue({
-        dataCategoryId: projectId.value,
-        value: JSON.stringify(list),
-    });
-};
-
 const openBoardSettings = () => {
     alert('TODO: Board settings einstellen');
 };
 const store = taskStore();
+const listIsOpen = ref(false);
 </script>
 <template>
     <div
@@ -62,6 +45,12 @@ const store = taskStore();
                     class="flex-grow"
                 />
                 <slot name="actions">
+                    <Button
+                        v-if="$route.name === 'project-board'"
+                        icon="fas fa-plus"
+                        outlined
+                        @click="listIsOpen = true"
+                    ></Button>
                     <Button
                         icon="fas fa-cog"
                         color="gray"
@@ -109,12 +98,13 @@ const store = taskStore();
                 </div>
             </div>
         </div>
-        <div class="max-w-full flex-grow overflow-auto">
-            <div class="flex h-full gap-4 overflow-x-auto p-4">
+        <div class="flex max-w-full flex-grow flex-col overflow-auto">
+            <div class="flex h-full flex-grow gap-4 overflow-x-auto p-4">
                 <slot></slot>
             </div>
         </div>
         <TaskDialog v-if="taskIsOpen" />
+        <ListDialog v-if="listIsOpen" @close="listIsOpen = false" />
     </div>
 </template>
 <style scoped>

@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Card, Button } from 'churchtools-styleguide';
-import { KEY } from '../main';
-import useCustommodule from '../custommodule/useCustommodule';
 import { tx } from '@churchtools/utils';
+import { Button, Card } from 'churchtools-styleguide';
+import { computed } from 'vue';
+import useCustommodule from '../custommodule/useCustommodule';
+import { KEY } from '../main';
+
+defineEmits<{
+    (event: 'edit-project', project: Project): void;
+}>();
 const { categories } = useCustommodule(KEY);
 const projects = computed<Project[]>(() =>
     categories.value.filter((cat) => cat.shorty?.startsWith('project'))

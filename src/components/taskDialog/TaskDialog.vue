@@ -1,27 +1,27 @@
 <script setup lang="ts">
+import { CustomdataValue, usePersons } from '@churchtools/utils';
 import {
-    Input,
     Button,
+    DialogLarge,
+    Input,
     InputDate,
     SelectDropdown,
-    Textarea,
-    DialogLarge,
-    Toggle,
     Tag,
+    Textarea,
+    Toggle,
 } from 'churchtools-styleguide';
-import { computed, onMounted, ref, onUpdated } from 'vue';
+import { computed, onMounted, onUpdated, ref } from 'vue';
 import { onBeforeRouteUpdate, useRouter } from 'vue-router';
-import { KEY } from '../../main';
-import useTasks from '../../composables/useTasks';
 import useTags from '../../composables/useTags';
-import TagDialog from '../TagDialog.vue';
-import { CustomdataValue, usePersons } from '@churchtools/utils';
-import TaskItem from '../TaskItem.vue';
-import NewTask from '../NewTask.vue';
 import useTask from '../../composables/useTask';
-import Activities from './Activities.vue';
-import { router } from '../../router';
+import useTasks from '../../composables/useTasks';
 import useCustommodule from '../../custommodule/useCustommodule';
+import { KEY } from '../../main';
+import { router } from '../../router';
+import NewTask from '../NewTask.vue';
+import TagDialog from '../TagDialog.vue';
+import TaskItem from '../TaskItem.vue';
+import Activities from './Activities.vue';
 
 const { updateTask, taskId, tasksObject, getObjectDiff } = useTasks();
 const { tagsArray } = useTags();
@@ -225,12 +225,12 @@ const showRelativeDate = ref(false);
                     @click="createTagIsOpen = true"
                 />
             </div>
-            <SelectDropdown
+            <!-- <SelectDropdown
                 v-model="internTask.assignedTo"
                 multiple
                 horizontal
                 label="Assignee"
-            />
+            /> -->
             <div class="flex gap-4">
                 <div class="w-48 flex-shrink-0 font-bold">Unteraufgaben</div>
                 <div class="flex-grow">

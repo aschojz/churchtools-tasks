@@ -9,6 +9,9 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import ProgressRing from '../components/ProgressRing.vue';
 import useTask from '../composables/useTask';
+import useTasks from '../composables/useTasks';
+import useCustommodule from '../custommodule/useCustommodule';
+import { KEY } from '../main';
 
 const props = defineProps<{
     item: TransformedTask;
@@ -25,7 +28,6 @@ const {
     dueDate,
     toggleTask,
     comments,
-    deleteTask,
     task,
     sortedTags,
     toDayMonth,
@@ -40,6 +42,57 @@ const showLastRow = computed(
     () =>
         dueDate.value || props.item.comments?.length || props.item.tags?.length
 );
+
+const { createValue, deleteValue } = useCustommodule(KEY);
+const { tasksObject } = useTasks();
+
+const createTaskOrSubtask = async (data: TransformedTask) => {
+    return await createValue({
+        ...data,
+        id: undefined,
+    });
+};
+
+async function duplicateTask() {
+    const originalTask = props.item;
+    const newSubtaskIds = await duplicateSubtasks(originalTask.subTasks);
+    const newTask = await createTaskOrSubtask({
+        ...originalTask,
+        subTasks: newSubtaskIds,
+    });
+    return newTask;
+}
+async function duplicateSubtasks(subtaskIds?: number[]) {
+    const newSubtaskIds = [];
+
+    if (subtaskIds?.length) {
+        for (const subtaskId of subtaskIds) {
+            const originalSubtask = tasksObject.value[subtaskId];
+            const nestedSubtaskIds = await duplicateSubtasks(
+                originalSubtask.subTasks
+            );
+            const newSubtask = await createTaskOrSubtask({
+                ...originalSubtask,
+                subTasks: nestedSubtaskIds,
+            });
+            if (newSubtask) {
+                newSubtaskIds.push(newSubtask.id);
+            }
+        }
+    }
+
+    return newSubtaskIds;
+}
+
+const deleteRecursive = (task: TransformedTask) => {
+    if (task.subTasks?.length) {
+        for (const subtaskId of task.subTasks) {
+            const subtask = tasksObject.value[subtaskId];
+            deleteRecursive(subtask);
+        }
+    }
+    deleteValue(task.id);
+};
 
 const contextMenu = computed(() => [
     {
@@ -73,13 +126,19 @@ const contextMenu = computed(() => [
                 callback: () => openTask(),
             },
             {
+                id: 'duplicate',
+                label: 'Duplizieren',
+                icon: 'fas fa-copy',
+                callback: () => duplicateTask(),
+            },
+            {
                 id: 'delete',
                 label: 'Löschen',
                 icon: {
                     icon: 'fas fa-trash-alt',
                     class: 'text-red-500',
                 },
-                callback: () => deleteTask(),
+                callback: () => deleteRecursive(props.item),
             },
         ],
     },

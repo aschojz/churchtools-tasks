@@ -1,5 +1,5 @@
-import { computed } from 'vue';
 import { useErrors, useToasts } from '@churchtools/utils';
+import { computed } from 'vue';
 import { CustomdataCategory, CustomdataValue } from '../types';
 import { useCustomdataCategoryStore } from './storeCustomdataCategory';
 import { useCustomdataValueStore } from './storeCustomdataValue';
