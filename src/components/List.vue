@@ -121,6 +121,7 @@ const listIsOpen = ref();
             }"
         >
             <button
+                v-if="$route.name === 'project-board'"
                 class="my-auto flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-gray-50 text-gray-400"
                 :class="{ 'm-2': list.isCollapsed }"
                 @click="onUpdateList({ isCollapsed: !list.isCollapsed })"

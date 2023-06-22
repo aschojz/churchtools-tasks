@@ -8,8 +8,13 @@ import useTags from './useTags';
 import useTasks from './useTasks';
 
 export default function useTask(taskId: ComputedRef<number> | Ref<number>) {
-    const { tasksObject, findParent, calculateDueDate, getSuperParent } =
-        useTasks();
+    const {
+        tasksObject,
+        findParent,
+        calculateDueDate,
+        getSuperParent,
+        getPercentFullfilled,
+    } = useTasks();
     const { projectId } = useProjects();
 
     const task = computed(() => {
@@ -17,11 +22,7 @@ export default function useTask(taskId: ComputedRef<number> | Ref<number>) {
     });
 
     const percentFullfilled = computed(() => {
-        const all = task.value.subTasks?.length ?? 0;
-        const fullfilled = (task.value.subTasks ?? [])
-            ?.map((st) => tasksObject.value[st])
-            .filter((st) => st?.fullfilled);
-        return Math.floor((fullfilled.length / all) * 100);
+        return getPercentFullfilled(task.value);
     });
 
     const parent = computed(() => {

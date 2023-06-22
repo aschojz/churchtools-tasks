@@ -55,15 +55,17 @@ const isDev = computed(() => import.meta.env.MODE === 'development');
                     href="https://github.com/aschojz/churchtools-tasks/issues"
                     >Fehler melden</Button
                 >
-                <div class="bg-border h-6 w-px"></div>
-                <Button
-                    size="S"
-                    icon="fas fa-plus"
-                    color="green"
-                    @click="onNewProject"
-                >
-                    {{ tx('Neues Projekt') }}
-                </Button>
+                <template v-if="$route.name === 'overview'">
+                    <div class="bg-border h-6 w-px"></div>
+                    <Button
+                        size="S"
+                        icon="fas fa-plus"
+                        color="green"
+                        @click="onNewProject"
+                    >
+                        {{ tx('Neues Projekt') }}
+                    </Button>
+                </template>
             </div>
         </div>
         <RouterView @edit-project="projectIsOpen = $event"></RouterView>

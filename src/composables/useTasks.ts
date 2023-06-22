@@ -27,6 +27,14 @@ export default function useTasks() {
         () => valuesByCategory.value[projectId.value] ?? []
     );
 
+    const getPercentFullfilled = (task: TransformedTask) => {
+        const all = task.subTasks?.length ?? 0;
+        const fullfilled = (task.subTasks ?? [])
+            ?.map((st) => tasksObject.value[st])
+            .filter((st) => st?.fullfilled);
+        return Math.floor((fullfilled.length / all) * 100);
+    };
+
     const tasks = computed<TransformedTask[]>(() => {
         const tasks: TransformedTask[] = values.value.filter(
             (v: TransformedTask | TransformedList) => v.type === 'task'
@@ -206,6 +214,7 @@ export default function useTasks() {
         calculateDueDate,
         findParent,
         getSuperParent,
+        getPercentFullfilled,
         transformedTasks,
     };
 }

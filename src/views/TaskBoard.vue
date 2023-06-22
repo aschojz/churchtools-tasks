@@ -6,7 +6,7 @@ import ViewWrapper from './ViewWrapper.vue';
 import { taskStore } from '../composables/storeTasks';
 import ProgressRing from '../components/ProgressRing.vue';
 
-const { tasks, tasksObject } = useTasks();
+const { tasks, tasksObject, getPercentFullfilled } = useTasks();
 const store = taskStore();
 
 const tasksByParent = computed(() => {
@@ -35,6 +35,7 @@ const boardlists = computed(() => {
         .map((task) => ({
             id: task.id,
             name: task.name,
+            percentage: getPercentFullfilled(task),
         }));
     return li;
 });
@@ -49,7 +50,7 @@ const boardlists = computed(() => {
             >
                 <template #header>
                     <ProgressRing
-                        :percent="55"
+                        :percent="list.percentage"
                         class="progress-icon relative text-[20px] text-gray-500"
                     />
                     <span>{{ list.name }}</span>

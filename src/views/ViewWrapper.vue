@@ -62,7 +62,7 @@ const listIsOpen = ref(false);
                     <Button
                         outlined
                         color="gray"
-                        icon="fas fa-expand-arrows-alt"
+                        :icon="fullscreen ? 'fas fa-compress' : 'fas fa-expand'"
                         @click="onFullscreen"
                     ></Button>
                 </slot>
