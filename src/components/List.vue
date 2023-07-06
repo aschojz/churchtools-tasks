@@ -195,7 +195,7 @@ const listIsOpen = ref();
                         @click="newTaskIsOpen = !newTaskIsOpen"
                     />
                     <DropdownMenu
-                        v-if="list.id !== 0"
+                        v-if="$route.name === 'project-board'"
                         :menu-items="listContextMenu"
                     >
                         <Button
