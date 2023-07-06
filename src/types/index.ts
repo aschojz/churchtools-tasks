@@ -1143,7 +1143,7 @@ export interface PermissionResult {
             'churchcal',
             'churchresource',
             'churchservice',
-            'churchcheckin'
+            'churchcheckin',
         ];
         names: unknown;
         person: {
