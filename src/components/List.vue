@@ -40,49 +40,59 @@ const onUpdateList = (list: Partial<TaskList>) => {
 const newTaskIsOpen = ref(false);
 
 const initItems = (items: TransformedTask[]) => {
-    internItems.value = items.map((item) => ({
+    const transformedItems = items.map((item) => ({
         ...item,
         dueDate: calculateDueDate(item),
     }));
+    internItems.value = sortBy(
+        transformedItems,
+        store.search ? 'score' : store.sortBy,
+        'sortKey',
+    );
 };
 onMounted(() => initItems(props.items));
 const internItems = ref<(TransformedTask & { dueDate: string | undefined })[]>(
     [],
 );
-const { calculateDueDate } = useTasks();
-const sortedItems = computed(() => {
-    return sortBy(
-        internItems.value,
-        store.search ? 'score' : store.sortBy,
-        'sortKey',
-    );
+watch(internItems, (newValue) => {
+    updateSortKeys(newValue);
 });
-const onMoveEnd = ({ newIndex, oldIndex }) => {
-    internItems.value.splice(
-        newIndex,
-        0,
-        internItems.value.splice(oldIndex, 1)[0],
-    );
-    const newValues: TransformedTask[] = [];
-    internItems.value.forEach((item, index) => {
-        if (item.sortKey === undefined || index !== item.sortKey) {
-            newValues.push({ ...item, sortKey: index });
+const { calculateDueDate } = useTasks();
+const updateSortKeys = (newAr: TransformedTask[]) => {
+    const half = 2,
+        distance = 10000;
+
+    const newArray = [
+        ...newAr.map((task) => ({
+            ...task,
+            list: props.list.id,
+            sortKey: props.list.id === task.list ? task.sortKey : 0,
+        })),
+    ];
+    const itemsToUpdate: TransformedTask[] = [];
+
+    // eslint-disable-next-line complexity
+    newArray.forEach((item, index) => {
+        const prevSortKey =
+            index > 0 ? newArray[index - 1].sortKey ?? index - 1 : 0;
+        const nextSortKey =
+            index < newArray.length - 1
+                ? newArray[index + 1].sortKey ?? index + 1
+                : prevSortKey + distance;
+        let distanceToAdd = Math.round((nextSortKey - prevSortKey) / half);
+        distanceToAdd = distanceToAdd > 0 ? distanceToAdd : distance;
+
+        if (
+            item.sortKey < prevSortKey ||
+            (item.sortKey > nextSortKey && distanceToAdd > 1)
+        ) {
+            const newSortKey =
+                prevSortKey + (distanceToAdd > 1 ? distanceToAdd : distance);
+            itemsToUpdate.push({ ...newArray[index], sortKey: newSortKey });
+            newArray[index].sortKey = newSortKey;
         }
     });
-    updateValues(newValues);
-};
-const onTaskDrop = ({
-    added,
-}: {
-    added: { element: TransformedTask; newIndex: number };
-}) => {
-    if (added) {
-        updateValue({
-            ...added.element,
-            list: props.list.id,
-            sortKey: added.newIndex,
-        });
-    }
+    updateValues(itemsToUpdate);
 };
 
 const listContextMenu = computed(() => {
@@ -224,12 +234,10 @@ const listIsOpen = ref();
         >
             <draggable
                 v-if="isDraggable"
-                :list="sortedItems"
+                v-model="internItems"
                 item-key="id"
                 group="tasks"
                 class="flex min-h-full flex-col gap-2"
-                @change="onTaskDrop"
-                @end="onMoveEnd"
             >
                 <template #header>
                     <NewTask
@@ -250,7 +258,7 @@ const listIsOpen = ref();
                     @close="newTaskIsOpen = false"
                 />
                 <Task
-                    v-for="item in sortedItems"
+                    v-for="item in internItems"
                     :key="item.id"
                     :item="item"
                     :show-task="showTask"
