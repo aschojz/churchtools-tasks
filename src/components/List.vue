@@ -12,7 +12,7 @@ import ListDialog from './ListDialog.vue';
 import NewTask from './NewTask.vue';
 import Task from './TaskItem.vue';
 
-const { updateValues, updateValue, deleteValue } = useCustommodule(KEY);
+const { updateValues, deleteValue } = useCustommodule(KEY);
 const store = taskStore();
 
 const props = withDefaults(
