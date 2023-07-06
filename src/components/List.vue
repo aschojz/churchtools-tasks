@@ -140,6 +140,7 @@ const listIsOpen = ref();
                             ? 'margin: calc(50% - 8px) 0; transform: rotate(90deg)'
                             : ''
                     "
+                    :title="list.name"
                 >
                     <slot name="header" :list="list">{{ list.name }}</slot>
                 </span>
