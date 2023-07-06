@@ -10,7 +10,7 @@ const { transformedTasks, showTask } = useTasks();
 const { lists } = useLists();
 
 const boardlists = computed(() => {
-    const li: TransformedList[] = [...lists.value];
+    const li = [...lists.value];
     return sortBy(li, 'sortKey');
 });
 
@@ -20,8 +20,8 @@ const tasksByList = computed(() => {
     const defaultListId = lists.value.find((l) => l.isDefault)?.id ?? 0;
     transformedTasks.value.forEach((task) => {
         if (showTask(task)) {
-            const listId = existingLists.includes(task.list ?? defaultListId)
-                ? task.list ?? defaultListId
+            const listId = task.list && existingLists.includes(task.list)
+                ? task.list 
                 : defaultListId;
             items[listId] ??= [];
             items[listId].push(task);

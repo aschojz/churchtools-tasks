@@ -159,7 +159,7 @@ export default function useTasks() {
     const { getListById, lists } = useLists();
     const showTask = (task: TransformedTask) => {
         const defaultListId = lists.value.find((l) => l.isDefault)?.id ?? 0;
-        const listId = task.list ? task.list : defaultListId;
+        const listId = task.list && getListById(task.list) ? task.list : defaultListId;
         const showCompleted = getListById(listId)?.showCompleted ?? false;
         const showSubTasks = getListById(listId)?.showSubTasks ?? false;
         return (
