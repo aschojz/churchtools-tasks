@@ -54,21 +54,26 @@ onMounted(() => initItems(props.items));
 const internItems = ref<(TransformedTask & { dueDate: string | undefined })[]>(
     [],
 );
-watch(internItems, (newValue) => {
-    updateSortKeys(newValue);
+watch(internItems, (newValue, oldValue) => {
+    if (newValue.length >= oldValue.length) {
+        updateSortKeys(newValue);
+    }
 });
 const { calculateDueDate } = useTasks();
 const updateSortKeys = (newAr: TransformedTask[]) => {
     const half = 2,
         distance = 10000;
 
-    const newArray = [
-        ...newAr.map((task) => ({
+    const newArray = sortBy(
+        newAr.map((task) => ({
             ...task,
             list: props.list.id,
             sortKey: props.list.id === task.list ? task.sortKey : 0,
+            added: props.list.id !== task.list,
         })),
-    ];
+        'dueDate',
+    );
+
     const itemsToUpdate: TransformedTask[] = [];
 
     // eslint-disable-next-line complexity
@@ -82,17 +87,25 @@ const updateSortKeys = (newAr: TransformedTask[]) => {
         let distanceToAdd = Math.round((nextSortKey - prevSortKey) / half);
         distanceToAdd = distanceToAdd > 0 ? distanceToAdd : distance;
 
-        if (
-            item.sortKey < prevSortKey ||
-            (item.sortKey > nextSortKey && distanceToAdd > 1)
+        if (item.dueDate && item.added) {
+            itemsToUpdate.push(item);
+        } else if (
+            ((item.sortKey < prevSortKey ||
+                (item.sortKey > nextSortKey && distanceToAdd < 1)) &&
+                !item.dueDate) ||
+            item.added
         ) {
             const newSortKey =
                 prevSortKey + (distanceToAdd > 1 ? distanceToAdd : distance);
-            itemsToUpdate.push({ ...newArray[index], sortKey: newSortKey });
+            const updatedItem = { ...newArray[index], sortKey: newSortKey };
+            delete updatedItem.added;
+            itemsToUpdate.push(updatedItem);
             newArray[index].sortKey = newSortKey;
         }
     });
-    updateValues(itemsToUpdate);
+    if (itemsToUpdate.length > 0) {
+        updateValues(itemsToUpdate);
+    }
 };
 
 const listContextMenu = computed(() => {
