@@ -51,12 +51,21 @@ const internItems = ref<(TransformedTask & { dueDate: string | undefined })[]>(
 );
 const { calculateDueDate } = useTasks();
 const sortedItems = computed(() => {
-    return sortBy(internItems.value, store.search ? 'score' : store.sortBy);
+    return sortBy(
+        internItems.value,
+        store.search ? 'score' : store.sortBy,
+        'sortKey',
+    );
 });
-const onMoveEnd = () => {
+const onMoveEnd = ({ newIndex, oldIndex }) => {
+    internItems.value.splice(
+        newIndex,
+        0,
+        internItems.value.splice(oldIndex, 1)[0],
+    );
     const newValues: TransformedTask[] = [];
     internItems.value.forEach((item, index) => {
-        if (index !== item.sortKey) {
+        if (item.sortKey === undefined || index !== item.sortKey) {
             newValues.push({ ...item, sortKey: index });
         }
     });

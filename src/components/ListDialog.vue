@@ -15,18 +15,24 @@ const emit = defineEmits<{
 
 const internalList = ref(props.list);
 
-const {updateList, createList} = useLists();
+const { updateList, createList } = useLists();
 
-const isTransformedList = (list: TaskList | TransformedList): list is TransformedList => {
+const isTransformedList = (
+    list: TaskList | TransformedList,
+): list is TransformedList => {
     return 'sortKey' in list;
-}
+};
 
 const onSave = (close: () => void) => {
-    (isTransformedList(internalList.value) ? updateList(internalList.value) : createList(internalList.value));
+    isTransformedList(internalList.value)
+        ? updateList(internalList.value)
+        : createList(internalList.value);
     close();
 };
 const context = computed(() => {
-    return isTransformedList(internalList.value) ? 'Liste bearbeiten' : 'Neue Liste anlegen';
+    return isTransformedList(internalList.value)
+        ? 'Liste bearbeiten'
+        : 'Neue Liste anlegen';
 });
 </script>
 <template>

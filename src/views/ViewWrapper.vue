@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Input, Toggle } from 'churchtools-styleguide';
+import { Button, Input } from 'churchtools-styleguide';
 import { ref } from 'vue';
 import ListDialog from '../components/ListDialog.vue';
 import TaskDialog from '../components/taskDialog/TaskDialog.vue';
