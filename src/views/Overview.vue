@@ -15,7 +15,7 @@ const projects = computed<Project[]>(() =>
 </script>
 <template>
     <div
-        class="mx-auto grid w-full max-w-[920px] flex-grow items-start gap-4 px-4 pt-4 md:grid-cols-2 lg:pt-8"
+        class="mx-auto grid w-full max-w-[920px] items-start auto-rows-min gap-4 px-4 pt-4 md:grid-cols-2 lg:py-8"
     >
         <div
             v-if="projects.length === 0"
@@ -37,6 +37,7 @@ const projects = computed<Project[]>(() =>
             v-else
             :key="project.id"
             :to="{ name: 'project', params: { projectId: project.id } }"
+            class="h-full"
         >
             <Card class="h-full hover:border-gray-300">
                 <div class="flex items-center gap-4">
