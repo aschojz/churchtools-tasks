@@ -6,7 +6,7 @@ import ViewWrapper from './ViewWrapper.vue';
 import useLists from '../composables/useLists';
 import { sortBy } from 'lodash';
 
-const {  transformedTasks, showTask } = useTasks();
+const { transformedTasks, showTask } = useTasks();
 const { lists } = useLists();
 
 const boardlists = computed(() => {

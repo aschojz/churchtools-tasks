@@ -5,7 +5,8 @@ import useCustommodule from '../custommodule/useCustommodule';
 import { taskStore } from './storeTasks';
 
 export default function useLists() {
-    const { values, createValue, updateValue, valueStore } = useCustommodule(KEY);
+    const { values, createValue, updateValue, valueStore } =
+        useCustommodule(KEY);
     const { projectId } = useProjects();
 
     const lists = computed(() => {
@@ -16,18 +17,25 @@ export default function useLists() {
     });
 
     const store = taskStore();
-    watch(() => valueStore.loadingState,() => {
-        if (valueStore.loadingState === 'SUCCESS' && !lists.value.some((l) => l.isDefault) && !store.isCreatingDefaultList ) {
-            store.isCreatingDefaultList = true;
-            createList({
-                name: 'Unsortiert',
-                sortKey: 0,
-                type: 'list',
-                isDefault: true,
-                isCollapsed: false,
-            });
-        }
-    })
+    watch(
+        () => valueStore.loadingState,
+        () => {
+            if (
+                valueStore.loadingState === 'SUCCESS' &&
+                !lists.value.some((l) => l.isDefault) &&
+                !store.isCreatingDefaultList
+            ) {
+                store.isCreatingDefaultList = true;
+                createList({
+                    name: 'Unsortiert',
+                    sortKey: 0,
+                    type: 'list',
+                    isDefault: true,
+                    isCollapsed: false,
+                });
+            }
+        },
+    );
 
     const createList = (list: TaskList) => {
         createValue({ ...list, dataCategoryId: projectId.value, type: 'list' });

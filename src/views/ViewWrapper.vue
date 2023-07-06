@@ -82,8 +82,7 @@ const listIsOpen = ref(false);
                         >Aufgaben</RouterLink
                     >
                 </div>
-                <div class="flex gap-4">
-                </div>
+                <div class="flex gap-4"></div>
             </div>
         </div>
         <div class="flex max-w-full flex-grow flex-col overflow-auto">

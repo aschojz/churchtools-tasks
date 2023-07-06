@@ -156,7 +156,7 @@ export default function useTasks() {
         );
     });
 
-    const {getListById, lists} = useLists();
+    const { getListById, lists } = useLists();
     const showTask = (task: TransformedTask) => {
         const defaultListId = lists.value.find((l) => l.isDefault)?.id ?? 0;
         const listId = task.list ? task.list : defaultListId;
@@ -164,8 +164,7 @@ export default function useTasks() {
         const showSubTasks = getListById(listId)?.showSubTasks ?? false;
         return (
             tasksInSearch.value[task.id] &&
-            ((!showCompleted && !task.fullfilled) ||
-                showCompleted) &&
+            ((!showCompleted && !task.fullfilled) || showCompleted) &&
             ((!showSubTasks && !task.parent) || showSubTasks)
         );
     };

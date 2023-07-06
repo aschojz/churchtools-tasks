@@ -9,5 +9,11 @@ export const taskStore = defineStore('tasks', () => {
 
     const isCreatingDefaultList = ref(false);
 
-    return { showSubTasks, showFullfilled, sortBy, isCreatingDefaultList, search };
+    return {
+        showSubTasks,
+        showFullfilled,
+        sortBy,
+        isCreatingDefaultList,
+        search,
+    };
 });

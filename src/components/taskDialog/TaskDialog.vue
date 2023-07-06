@@ -209,8 +209,12 @@ const isSmallScreen = computed(() => window.innerWidth < 768);
                     />
                 </div>
             </div>
-            <Input v-model="internTask.url" label="Link" :horizontal="!isSmallScreen" />
-            <div class="flex gap-2 items-end">
+            <Input
+                v-model="internTask.url"
+                label="Link"
+                :horizontal="!isSmallScreen"
+            />
+            <div class="flex items-end gap-2">
                 <SelectDropdown
                     v-model="internTask.tags"
                     :horizontal="!isSmallScreen"
@@ -232,8 +236,8 @@ const isSmallScreen = computed(() => window.innerWidth < 768);
                 horizontal
                 label="Assignee"
             /> -->
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="md:w-48 flex-shrink-0 font-bold">Unteraufgaben</div>
+            <div class="flex flex-col gap-4 md:flex-row">
+                <div class="flex-shrink-0 font-bold md:w-48">Unteraufgaben</div>
                 <div class="flex-grow">
                     <div class="task_wrapper">
                         <TaskItem

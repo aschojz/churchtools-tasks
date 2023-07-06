@@ -56,8 +56,7 @@ const isSmallScreen = computed(() => window.innerWidth < 768);
                     target="_blank"
                     href="https://github.com/aschojz/churchtools-tasks/issues"
                     :label="isSmallScreen ? '' : 'Fehler melden'"
-                    ></Button
-                >
+                ></Button>
                 <template v-if="$route.name === 'overview'">
                     <div v-if="!isSmallScreen" class="bg-border h-6 w-px"></div>
                     <Button

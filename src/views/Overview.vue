@@ -15,7 +15,7 @@ const projects = computed<Project[]>(() =>
 </script>
 <template>
     <div
-        class="mx-auto grid w-full max-w-[920px] flex-grow items-start gap-4 px-4 md:grid-cols-2 pt-4 lg:pt-8"
+        class="mx-auto grid w-full max-w-[920px] flex-grow items-start gap-4 px-4 pt-4 md:grid-cols-2 lg:pt-8"
     >
         <div
             v-if="projects.length === 0"
