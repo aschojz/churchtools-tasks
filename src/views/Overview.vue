@@ -28,7 +28,7 @@ const projects = computed<Project[]>(() =>
             <Button
                 icon="fas fa-plus"
                 color="green"
-                @click="$emit('edit-project', {})"
+                @click="$emit('edit-project')"
                 >{{ tx('Projekt anlegen') }}</Button
             >
         </div>

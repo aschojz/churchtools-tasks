@@ -1,4 +1,4 @@
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { KEY } from '../main';
 import useProjects from './useProjects';
 import useCustommodule from '../custommodule/useCustommodule';
@@ -11,7 +11,7 @@ export default function useLists() {
 
     const lists = computed(() => {
         const lists: TransformedList[] = values.value.filter(
-            (v: TransformedList) => v.type === 'list',
+            (v: TransformedList) => v.type === 'list' && v.dataCategoryId === projectId.value,
         );
         return lists;
     });
@@ -19,26 +19,30 @@ export default function useLists() {
     const store = taskStore();
     watch(
         () => valueStore.loadingState,
-        () => {
-            if (
-                valueStore.loadingState === 'SUCCESS' &&
-                !lists.value.some((l) => l.isDefault) &&
-                !store.isCreatingDefaultList
-            ) {
-                store.isCreatingDefaultList = true;
-                createList({
-                    name: 'Unsortiert',
-                    sortKey: 0,
-                    type: 'list',
-                    isDefault: true,
-                    isCollapsed: false,
-                });
-            }
-        },
+        () => createDefaultList(),
     );
+    watch(() => projectId.value, () => createDefaultList())
+    const createDefaultList = async () => {
+        if (
+            valueStore.loadingState === 'SUCCESS' &&
+            !lists.value.some((l) => l.isDefault) &&
+            !store.isCreatingDefaultList
+        ) {
+            store.isCreatingDefaultList = true;
+            await createList({
+                name: 'Unsortiert',
+                sortKey: 0,
+                type: 'list',
+                isDefault: true,
+                isCollapsed: false,
+            });
+            store.isCreatingDefaultList = false;
+        }
+    }
+    onMounted(() => createDefaultList())
 
     const createList = (list: TaskList) => {
-        createValue({ ...list, dataCategoryId: projectId.value, type: 'list' });
+        return createValue({ ...list, dataCategoryId: projectId.value, type: 'list' });
     };
 
     const updateList = (list: TransformedList) => {
