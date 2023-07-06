@@ -7,6 +7,7 @@ import useCustommodule from '../custommodule/useCustommodule';
 import { KEY } from '../main';
 import { taskStore } from './storeTasks';
 import useProjects from './useProjects';
+import useLists from './useLists';
 
 export default function useTasks() {
     const { currentRoute } = useRouter();
@@ -50,12 +51,6 @@ export default function useTasks() {
     });
     const tasksObject = computed(() => {
         return Object.fromEntries(tasks.value.map((t) => [t.id, t]));
-    });
-    const lists = computed(() => {
-        const li: TransformedList[] = values.value.filter(
-            (v: TransformedTask | TransformedList) => v.type === 'list',
-        );
-        return li;
     });
 
     const assignedIds = computed(() => {
@@ -161,12 +156,17 @@ export default function useTasks() {
         );
     });
 
+    const {getListById, lists} = useLists();
     const showTask = (task: TransformedTask) => {
+        const defaultListId = lists.value.find((l) => l.isDefault)?.id ?? 0;
+        const listId = task.list ? task.list : defaultListId;
+        const showCompleted = getListById(listId)?.showCompleted ?? false;
+        const showSubTasks = getListById(listId)?.showSubTasks ?? false;
         return (
             tasksInSearch.value[task.id] &&
-            ((!store.showFullfilled && !task.fullfilled) ||
-                store.showFullfilled) &&
-            ((!store.showSubTasks && !task.parent) || store.showSubTasks)
+            ((!showCompleted && !task.fullfilled) ||
+                showCompleted) &&
+            ((!showSubTasks && !task.parent) || showSubTasks)
         );
     };
 
@@ -205,7 +205,6 @@ export default function useTasks() {
         tasksObject,
         values,
         tasks,
-        lists,
         taskIsOpen,
         showTask,
         createTask,

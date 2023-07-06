@@ -34,11 +34,7 @@ watch(
 
 const { updateList } = useLists();
 const onUpdateList = (list: Partial<TaskList>) => {
-    if (props.list.id !== 0) {
-        updateList({ ...props.list, ...list });
-    } else {
-        store.unsortedList.isCollapsed = !store.unsortedList.isCollapsed;
-    }
+    updateList({ ...props.list, ...list });
 };
 
 const newTaskIsOpen = ref(false);
@@ -86,6 +82,34 @@ const listContextMenu = computed(() => {
             title: `Liste "${props.list.name}"`,
             items: [
                 {
+                    id: 'showSubTasks',
+                    label: 'Unteraufgaben anzeigen',
+                    icon: props.list.showSubTasks
+                        ? { icon: 'fas fa-toggle-on', class: 'text-green-500' }
+                        : 'fas fa-toggle-off',
+                    callback: () => {
+                        onUpdateList({
+                            showSubTasks: !props.list.showSubTasks,
+                        });
+                    },
+                },
+                {
+                    id: 'showCompleted',
+                    label: 'Erledigte Aufgaben anzeigen',
+                    icon: props.list.showCompleted
+                        ? { icon: 'fas fa-toggle-on', class: 'text-green-500' }
+                        : 'fas fa-toggle-off',
+                    callback: () => {
+                        onUpdateList({
+                            showCompleted: !props.list.showCompleted,
+                        });
+                    },
+                },
+            ],
+        },
+        {
+            items: [
+                {
                     id: 'edit',
                     label: 'Bearbeiten',
                     icon: 'fas fa-pen',
@@ -94,6 +118,7 @@ const listContextMenu = computed(() => {
                 {
                     id: 'delete',
                     label: 'Löschen',
+                    disabled: props.list.isDefault,
                     icon: {
                         icon: 'fas fa-trash-alt',
                         class: 'text-red-500',

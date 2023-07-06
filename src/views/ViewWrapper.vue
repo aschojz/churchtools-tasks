@@ -83,20 +83,6 @@ const listIsOpen = ref(false);
                     >
                 </div>
                 <div class="flex gap-4">
-                    <div v-if="subTaskToggle" class="flex items-center gap-1">
-                        <span>Subtasks anzeigen</span>
-                        <Toggle
-                            v-model="store.showSubTasks"
-                            label="Subtasks anzeigen"
-                        />
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <span>Erfüllte anzeigen</span>
-                        <Toggle
-                            v-model="store.showFullfilled"
-                            label="Erfüllte anzeigen"
-                        />
-                    </div>
                 </div>
             </div>
         </div>

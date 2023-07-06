@@ -3,25 +3,26 @@ import { computed } from 'vue';
 import List from '../components/List.vue';
 import useTasks from '../composables/useTasks';
 import ViewWrapper from './ViewWrapper.vue';
-import { taskStore } from '../composables/storeTasks';
+import useLists from '../composables/useLists';
+import { sortBy } from 'lodash';
 
-const { lists, transformedTasks, showTask } = useTasks();
-const store = taskStore();
+const {  transformedTasks, showTask } = useTasks();
+const { lists } = useLists();
 
 const boardlists = computed(() => {
     const li: TransformedList[] = [...lists.value];
-    li.unshift(store.unsortedList as TransformedList);
-    return li;
+    return sortBy(li, 'sortKey');
 });
 
 const tasksByList = computed(() => {
     const items: Record<number, TransformedTask[]> = {};
     const existingLists = boardlists.value.map((l) => l.id);
+    const defaultListId = lists.value.find((l) => l.isDefault)?.id ?? 0;
     transformedTasks.value.forEach((task) => {
         if (showTask(task)) {
-            const listId = existingLists.includes(task.list ?? 0)
-                ? task.list ?? 0
-                : 0;
+            const listId = existingLists.includes(task.list ?? defaultListId)
+                ? task.list ?? defaultListId
+                : defaultListId;
             items[listId] ??= [];
             items[listId].push(task);
         }

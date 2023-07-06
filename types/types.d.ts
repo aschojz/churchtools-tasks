@@ -10,6 +10,9 @@ interface TaskList {
     name: string;
     sortKey: number;
     isCollapsed?: boolean;
+    showSubTasks?: boolean;
+    showCompleted?: boolean;
+    isDefault?: boolean;
 }
 interface Task {
     type: 'task';
