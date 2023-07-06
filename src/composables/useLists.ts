@@ -11,7 +11,8 @@ export default function useLists() {
 
     const lists = computed(() => {
         const lists: TransformedList[] = values.value.filter(
-            (v: TransformedList) => v.type === 'list' && v.dataCategoryId === projectId.value,
+            (v: TransformedList) =>
+                v.type === 'list' && v.dataCategoryId === projectId.value,
         );
         return lists;
     });
@@ -21,7 +22,10 @@ export default function useLists() {
         () => valueStore.loadingState,
         () => createDefaultList(),
     );
-    watch(() => projectId.value, () => createDefaultList())
+    watch(
+        () => projectId.value,
+        () => createDefaultList(),
+    );
     const createDefaultList = async () => {
         if (
             valueStore.loadingState === 'SUCCESS' &&
@@ -38,11 +42,15 @@ export default function useLists() {
             });
             store.isCreatingDefaultList = false;
         }
-    }
-    onMounted(() => createDefaultList())
+    };
+    onMounted(() => createDefaultList());
 
     const createList = (list: TaskList) => {
-        return createValue({ ...list, dataCategoryId: projectId.value, type: 'list' });
+        return createValue({
+            ...list,
+            dataCategoryId: projectId.value,
+            type: 'list',
+        });
     };
 
     const updateList = (list: TransformedList) => {

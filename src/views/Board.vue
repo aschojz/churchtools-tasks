@@ -20,9 +20,10 @@ const tasksByList = computed(() => {
     const defaultListId = lists.value.find((l) => l.isDefault)?.id ?? 0;
     transformedTasks.value.forEach((task) => {
         if (showTask(task)) {
-            const listId = task.list && existingLists.includes(task.list)
-                ? task.list 
-                : defaultListId;
+            const listId =
+                task.list && existingLists.includes(task.list)
+                    ? task.list
+                    : defaultListId;
             items[listId] ??= [];
             items[listId].push(task);
         }

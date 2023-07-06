@@ -15,7 +15,12 @@ const initModule = async () => {
     await loadValues();
 };
 initModule();
-const onNewProject = () => (projectIsOpen.value = { description: '', color: 'green', icon: 'fas fa-tasks'} as Project);
+const onNewProject = () =>
+    (projectIsOpen.value = {
+        description: '',
+        color: 'green',
+        icon: 'fas fa-tasks',
+    } as Project);
 const projectIsOpen = ref<Project>();
 const isDev = computed(() => import.meta.env.MODE === 'development');
 
