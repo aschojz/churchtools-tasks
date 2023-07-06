@@ -51,7 +51,7 @@ const onCancelComment = () => {
 };
 </script>
 <template>
-    <div class="flex gap-4">
+    <div class="flex flex-col md:flex-row gap-4">
         <div class="w-48 font-bold">Aktivität</div>
         <div class="flex flex-grow flex-col gap-3">
             <div class="group flex flex-col gap-2">

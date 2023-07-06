@@ -9,7 +9,7 @@ const { project, projects, deleteProject } = useProjects();
 </script>
 <template>
     <div class="theme-back grid flex-grow grid-cols-5">
-        <div class="flex flex-col border-r border-gray-300 pt-4">
+        <div class="hidden md:flex flex-col border-r border-gray-300 pt-4">
             <RouterLink
                 v-for="p in projects"
                 :key="p.shorty"
@@ -50,7 +50,7 @@ const { project, projects, deleteProject } = useProjects();
                 </div>
             </RouterLink>
         </div>
-        <div class="col-span-4 flex flex-col">
+        <div class="col-span-5 md:col-span-4 flex flex-col">
             <div class="flex flex-col gap-2 px-4 pt-3">
                 <div class="flex items-center gap-3 text-lg font-bold">
                     <i

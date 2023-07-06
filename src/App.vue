@@ -18,6 +18,8 @@ initModule();
 const onNewProject = () => (projectIsOpen.value = {} as Project);
 const projectIsOpen = ref<Project>();
 const isDev = computed(() => import.meta.env.MODE === 'development');
+
+const isSmallScreen = computed(() => window.innerWidth < 768);
 </script>
 <template>
     <div v-if="isDev" class="h-14 w-full bg-primary-900"></div>
@@ -53,17 +55,18 @@ const isDev = computed(() => import.meta.env.MODE === 'development');
                     color="violet"
                     target="_blank"
                     href="https://github.com/aschojz/churchtools-tasks/issues"
-                    >Fehler melden</Button
+                    :label="isSmallScreen ? '' : 'Fehler melden'"
+                    ></Button
                 >
                 <template v-if="$route.name === 'overview'">
-                    <div class="bg-border h-6 w-px"></div>
+                    <div v-if="!isSmallScreen" class="bg-border h-6 w-px"></div>
                     <Button
                         size="S"
                         icon="fas fa-plus"
                         color="green"
+                        :label="isSmallScreen ? '' : tx('Neues Projekt')"
                         @click="onNewProject"
                     >
-                        {{ tx('Neues Projekt') }}
                     </Button>
                 </template>
             </div>

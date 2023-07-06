@@ -134,6 +134,7 @@ const showBackButton = computed(() => {
 });
 
 const showRelativeDate = ref(false);
+const isSmallScreen = computed(() => window.innerWidth < 768);
 </script>
 <template>
     <DialogLarge
@@ -167,12 +168,12 @@ const showRelativeDate = ref(false);
                 v-model="internTask.name"
                 label="Titel"
                 required
-                horizontal
+                :horizontal="!isSmallScreen"
             />
             <Textarea
                 v-model="internTask.description"
                 label="Beschreibung"
-                horizontal
+                :horizontal="!isSmallScreen"
                 :rows="10"
             />
             <div class="flex items-center justify-between">
@@ -183,7 +184,7 @@ const showRelativeDate = ref(false);
                         type="number"
                         class="max-w-[420px]"
                         note="Tage relativ zur Oberaufgabe"
-                        horizontal
+                        :horizontal="!isSmallScreen"
                         placeholder="Anzahl Tage im Voraus"
                     />
                     <Tag
@@ -196,7 +197,7 @@ const showRelativeDate = ref(false);
                 <InputDate
                     v-else
                     v-model="internTask.dueDate"
-                    horizontal
+                    :horizontal="!isSmallScreen"
                     class="max-w-[520px]"
                     label="Fällig am"
                 />
@@ -208,11 +209,11 @@ const showRelativeDate = ref(false);
                     />
                 </div>
             </div>
-            <Input v-model="internTask.url" label="Link" horizontal />
-            <div class="flex gap-2">
+            <Input v-model="internTask.url" label="Link" :horizontal="!isSmallScreen" />
+            <div class="flex gap-2 items-end">
                 <SelectDropdown
                     v-model="internTask.tags"
-                    horizontal
+                    :horizontal="!isSmallScreen"
                     emit-id
                     multiple
                     class="flex-grow"
@@ -231,8 +232,8 @@ const showRelativeDate = ref(false);
                 horizontal
                 label="Assignee"
             /> -->
-            <div class="flex gap-4">
-                <div class="w-48 flex-shrink-0 font-bold">Unteraufgaben</div>
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="md:w-48 flex-shrink-0 font-bold">Unteraufgaben</div>
                 <div class="flex-grow">
                     <div class="task_wrapper">
                         <TaskItem
