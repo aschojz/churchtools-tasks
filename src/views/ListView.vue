@@ -14,7 +14,7 @@ const filteredTasks = computed(() => {
     const filtered = tasks.value.filter((task) => showTask(task));
     return sortBy(
         filtered.map((t) => ({ ...t, dueDate: calculateDueDate(t) })),
-        store.sortBy
+        store.sortBy,
     );
 });
 </script>

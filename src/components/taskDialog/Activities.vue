@@ -8,7 +8,7 @@ const props = withDefaults(
     defineProps<{
         activities: ActivityEntry[];
     }>(),
-    { activities: () => [] }
+    { activities: () => [] },
 );
 const emit = defineEmits<{
     (event: 'comment', payload: ActivityEntry[]): void;

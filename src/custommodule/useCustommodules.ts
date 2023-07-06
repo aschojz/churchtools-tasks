@@ -13,7 +13,7 @@ export default function useCustommodules() {
     const custommodules = computed(() => Object.values(store.custommodules));
     const createModule = async (
         payload: Partial<Omit<Custommodule, 'id'>>,
-        formData: FormData
+        formData: FormData,
     ) => {
         try {
             await store.createCustommodule(payload, formData);

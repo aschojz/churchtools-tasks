@@ -1057,7 +1057,7 @@ const fieldCategoryCode = [
 ] as const;
 export type FieldCategoryCode = (typeof fieldCategoryCode)[number];
 export const isFieldCategoryCode = (
-    x: FieldCategoryCode
+    x: FieldCategoryCode,
 ): x is FieldCategoryCode => fieldCategoryCode.includes(x);
 
 export interface BasicField {

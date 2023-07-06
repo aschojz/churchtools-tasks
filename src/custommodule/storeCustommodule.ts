@@ -9,15 +9,15 @@ export const useCustommoduleStore = defineStore('custommodule', () => {
 
     const createCustommodule = async (
         payload: Partial<Omit<Custommodule, 'id'>>,
-        upload: FormData
+        upload: FormData,
     ) => {
         const result: Custommodule = await churchtoolsClient.post(
             `/custommodules`,
-            payload
+            payload,
         );
         await churchtoolsClient.post(
             `/files/custom_module/${result.id}`,
-            upload
+            upload,
         );
         custommodules.value[result.id] = result;
     };
@@ -26,10 +26,10 @@ export const useCustommoduleStore = defineStore('custommodule', () => {
         custommodules.value[payload.id] = payload;
     };
     const getCustommodule = async (
-        id: Custommodule['shorty'] | Custommodule['id']
+        id: Custommodule['shorty'] | Custommodule['id'],
     ) => {
         const result: Custommodule = await churchtoolsClient.get(
-            `/custommodules/${id}`
+            `/custommodules/${id}`,
         );
         custommodules.value[result.id] = result;
     };
@@ -37,10 +37,10 @@ export const useCustommoduleStore = defineStore('custommodule', () => {
         try {
             loadingState.value = 'LOADING';
             const result: Custommodule[] = await churchtoolsClient.get(
-                `/custommodules`
+                `/custommodules`,
             );
             custommodules.value = Object.fromEntries(
-                result.map((r) => [r.id, r])
+                result.map((r) => [r.id, r]),
             );
             loadingState.value = 'SUCCESS';
         } catch (error) {

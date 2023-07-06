@@ -41,7 +41,7 @@ const openTask = () => {
 
 const showLastRow = computed(
     () =>
-        dueDate.value || props.item.comments?.length || props.item.tags?.length
+        dueDate.value || props.item.comments?.length || props.item.tags?.length,
 );
 
 const { createValue, deleteValue } = useCustommodule(KEY);
@@ -70,7 +70,7 @@ async function duplicateSubtasks(subtaskIds?: number[]) {
         for (const subtaskId of subtaskIds) {
             const originalSubtask = tasksObject.value[subtaskId];
             const nestedSubtaskIds = await duplicateSubtasks(
-                originalSubtask.subTasks
+                originalSubtask.subTasks,
             );
             const newSubtask = await createTaskOrSubtask({
                 ...originalSubtask,

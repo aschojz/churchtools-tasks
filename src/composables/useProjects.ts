@@ -21,11 +21,13 @@ export default function useProjects() {
     });
 
     const projects = computed(() =>
-        categories.value.filter((cat) => cat.shorty?.startsWith('project'))
+        categories.value.filter((cat) => cat.shorty?.startsWith('project')),
     );
 
     const project = computed(() =>
-        projects.value.find((pro) => String(pro.id) === String(projectId.value))
+        projects.value.find(
+            (pro) => String(pro.id) === String(projectId.value),
+        ),
     );
 
     const createProject = (project: Project) => {

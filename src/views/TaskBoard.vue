@@ -20,9 +20,9 @@ const tasksByParent = computed(() => {
                     (st) =>
                         !!st &&
                         ((!store.showFullfilled && !st.fullfilled) ||
-                            store.showFullfilled)
+                            store.showFullfilled),
                 ),
-        ])
+        ]),
     );
 });
 
@@ -30,7 +30,7 @@ const boardlists = computed(() => {
     const li: TransformedList[] = tasks.value
         .filter(
             (task) =>
-                task.subTasks?.filter((st) => tasksObject.value[st]).length
+                task.subTasks?.filter((st) => tasksObject.value[st]).length,
         )
         .map((task) => ({
             id: task.id,

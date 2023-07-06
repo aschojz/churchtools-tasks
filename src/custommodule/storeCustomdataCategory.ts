@@ -13,44 +13,44 @@ export const useCustomdataCategoryStore = defineStore(
 
         const createCustomdataCategory = async (
             moduleId: CustomdataCategory['customModuleId'],
-            payload: Partial<Omit<CustomdataCategory, 'id'>>
+            payload: Partial<Omit<CustomdataCategory, 'id'>>,
         ) => {
             const result: CustomdataCategory = await churchtoolsClient.post(
                 `/custommodules/${moduleId}/customdatacategories`,
-                payload
+                payload,
             );
             customdataCategories.value[result.shorty] = result;
         };
         const updateCustomdataCategory = async (
             moduleId: CustomdataCategory['customModuleId'],
-            payload: CustomdataCategory
+            payload: CustomdataCategory,
         ) => {
             await churchtoolsClient.put(
                 `/custommodules/${moduleId}/customdatacategories/${payload.id}`,
-                payload
+                payload,
             );
             customdataCategories.value[payload.shorty] = payload;
         };
         const getCustomdataCategory = async (
             moduleId: CustomdataCategory['customModuleId'],
-            catId: CustomdataCategory['id']
+            catId: CustomdataCategory['id'],
         ) => {
             const result: CustomdataCategory = await churchtoolsClient.get(
-                `/custommodules/${moduleId}/customdatacategories/${catId}`
+                `/custommodules/${moduleId}/customdatacategories/${catId}`,
             );
             customdataCategories.value[result.shorty] = result;
         };
         const getCustomdataCategories = async (
-            moduleId: CustomdataCategory['customModuleId']
+            moduleId: CustomdataCategory['customModuleId'],
         ) => {
             try {
                 loadingState.value = 'LOADING';
                 const result: CustomdataCategory[] =
                     await churchtoolsClient.get(
-                        `/custommodules/${moduleId}/customdatacategories`
+                        `/custommodules/${moduleId}/customdatacategories`,
                     );
                 customdataCategories.value = Object.fromEntries(
-                    result.map((r) => [r.shorty, r])
+                    result.map((r) => [r.shorty, r]),
                 );
                 loadingState.value = 'SUCCESS';
             } catch (error) {
@@ -60,10 +60,10 @@ export const useCustomdataCategoryStore = defineStore(
         };
         const deleteCustomdataCategory = async (
             moduleId: CustomdataCategory['customModuleId'],
-            catId: CustomdataCategory['id']
+            catId: CustomdataCategory['id'],
         ) => {
             await churchtoolsClient.deleteApi(
-                `/custommodules/${moduleId}/customdatacategories/${catId}`
+                `/custommodules/${moduleId}/customdatacategories/${catId}`,
             );
             delete customdataCategories.value[catId];
         };
@@ -77,5 +77,5 @@ export const useCustomdataCategoryStore = defineStore(
             getCustomdataCategory,
             deleteCustomdataCategory,
         };
-    }
+    },
 );

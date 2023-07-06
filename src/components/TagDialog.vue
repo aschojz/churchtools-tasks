@@ -16,7 +16,7 @@ const colors = computed(() =>
         label: c.key,
         color: c,
         icon: 'fas fa-circle',
-    }))
+    })),
 );
 const { createTag } = useTags();
 const tag = ref({} as Tag);

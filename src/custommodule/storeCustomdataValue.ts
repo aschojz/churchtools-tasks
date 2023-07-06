@@ -11,36 +11,36 @@ export const useCustomdataValueStore = defineStore('customdataValue', () => {
 
     const createCustomdataValue = async (
         moduleId: number,
-        payload: Partial<Omit<CustomdataValue, 'id'>>
+        payload: Partial<Omit<CustomdataValue, 'id'>>,
     ) => {
         const result = await churchtoolsClient.post<CustomdataValue>(
             `/custommodules/${moduleId}/customdatavalues`,
-            payload
+            payload,
         );
         customdataValues.value[result.id] = result;
         return result;
     };
     const updateCustomdataValue = async (
         moduleId: number,
-        payload: CustomdataValue
+        payload: CustomdataValue,
     ) => {
         await churchtoolsClient.put(
             `/custommodules/${moduleId}/customdatavalues/${payload.id}`,
-            payload
+            payload,
         );
         customdataValues.value[payload.id] = payload;
     };
     const updateCustomdataValues = async (
         moduleId: number,
-        payloads: CustomdataValue[]
+        payloads: CustomdataValue[],
     ) => {
         const promises: Promise<CustomdataValue>[] = [];
         payloads.forEach(async (payload) => {
             promises.push(
                 churchtoolsClient.put<CustomdataValue>(
                     `/custommodules/${moduleId}/customdatavalues/${payload.id}`,
-                    payload
-                )
+                    payload,
+                ),
             );
         });
         await Promise.all(promises);
@@ -50,10 +50,10 @@ export const useCustomdataValueStore = defineStore('customdataValue', () => {
     };
     const getCustomdataValue = async (
         moduleId: number,
-        valueId: CustomdataValue['id']
+        valueId: CustomdataValue['id'],
     ) => {
         const result = await churchtoolsClient.get<CustomdataValue>(
-            `/custommodules/${moduleId}/customdatavalues/${valueId}`
+            `/custommodules/${moduleId}/customdatavalues/${valueId}`,
         );
         customdataValues.value[valueId] = result;
     };
@@ -61,10 +61,10 @@ export const useCustomdataValueStore = defineStore('customdataValue', () => {
         try {
             loadingState.value = 'LOADING';
             const result = await churchtoolsClient.get<CustomdataValue[]>(
-                `/custommodules/${moduleId}/customdatavalues`
+                `/custommodules/${moduleId}/customdatavalues`,
             );
             customdataValues.value = Object.fromEntries(
-                result.map((r) => [r.id, r])
+                result.map((r) => [r.id, r]),
             );
             loadingState.value = 'SUCCESS';
         } catch (error) {
@@ -73,10 +73,10 @@ export const useCustomdataValueStore = defineStore('customdataValue', () => {
     };
     const deleteCustomdataValues = async (
         moduleId: number,
-        valueId: CustomdataValue['id']
+        valueId: CustomdataValue['id'],
     ) => {
         await churchtoolsClient.deleteApi(
-            `/custommodules/${moduleId}/customdatavalues/${valueId}`
+            `/custommodules/${moduleId}/customdatavalues/${valueId}`,
         );
         delete customdataValues.value[valueId];
     };

@@ -22,14 +22,14 @@ const props = withDefaults(
         showTask?: boolean;
         isDraggable?: boolean;
     }>(),
-    { items: () => [], isDraggable: true }
+    { items: () => [], isDraggable: true },
 );
 
 watch(
     () => props.items,
     () => {
         initItems(props.items);
-    }
+    },
 );
 
 const { updateList } = useLists();
@@ -51,7 +51,7 @@ const initItems = (items: TransformedTask[]) => {
 };
 onMounted(() => initItems(props.items));
 const internItems = ref<(TransformedTask & { dueDate: string | undefined })[]>(
-    []
+    [],
 );
 const { calculateDueDate } = useTasks();
 const sortedItems = computed(() => {

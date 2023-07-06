@@ -24,7 +24,7 @@ export default function useTasks() {
         return id;
     });
     const values = computed(
-        () => valuesByCategory.value[projectId.value] ?? []
+        () => valuesByCategory.value[projectId.value] ?? [],
     );
 
     const getPercentFullfilled = (task: TransformedTask) => {
@@ -37,7 +37,7 @@ export default function useTasks() {
 
     const tasks = computed<TransformedTask[]>(() => {
         const tasks: TransformedTask[] = values.value.filter(
-            (v: TransformedTask | TransformedList) => v.type === 'task'
+            (v: TransformedTask | TransformedList) => v.type === 'task',
         );
         return tasks;
     });
@@ -53,7 +53,7 @@ export default function useTasks() {
     });
     const lists = computed(() => {
         const li: TransformedList[] = values.value.filter(
-            (v: TransformedTask | TransformedList) => v.type === 'list'
+            (v: TransformedTask | TransformedList) => v.type === 'list',
         );
         return li;
     });
@@ -71,7 +71,7 @@ export default function useTasks() {
         () => assignedIds.value,
         () => {
             loadPersons({ ids: assignedIds.value });
-        }
+        },
     );
 
     const taskIsOpen = computed(() => {
@@ -97,7 +97,7 @@ export default function useTasks() {
 
     const updateTask = async (
         task: TransformedTask,
-        diff: Partial<TransformedTask> = {}
+        diff: Partial<TransformedTask> = {},
     ) => {
         const activity = task.activity;
         activity?.push({
@@ -117,7 +117,7 @@ export default function useTasks() {
     const getObjectDiff = (
         obj1: Record<string, unknown>,
         obj2: Record<string, unknown>,
-        compareRef = false
+        compareRef = false,
     ) => {
         return Object.keys(obj1).reduce((result, key) => {
             if (!Object.prototype.hasOwnProperty.call(obj2, key)) {
@@ -153,11 +153,11 @@ export default function useTasks() {
                     .map((task) => [
                         task.item.id,
                         { ...task.item, score: task.score },
-                    ])
+                    ]),
             );
         }
         return Object.fromEntries(
-            tasks.value.map((task) => [task.id, { ...task, score: undefined }])
+            tasks.value.map((task) => [task.id, { ...task, score: undefined }]),
         );
     });
 
@@ -184,7 +184,7 @@ export default function useTasks() {
                 if (parentDueDate) {
                     dueDate = new Date(
                         parentDueDate.getTime() -
-                            t.dueDateRelative * 24 * 60 * 60 * 1000
+                            t.dueDateRelative * 24 * 60 * 60 * 1000,
                     );
                 }
             }

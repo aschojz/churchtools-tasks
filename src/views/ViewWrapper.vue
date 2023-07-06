@@ -12,7 +12,7 @@ withDefaults(
     defineProps<{
         subTaskToggle?: boolean;
     }>(),
-    { subTaskToggle: true }
+    { subTaskToggle: true },
 );
 
 const fullscreen = ref(false);

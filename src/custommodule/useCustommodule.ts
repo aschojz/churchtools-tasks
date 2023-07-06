@@ -14,12 +14,14 @@ export default function useCustommodule(key: string) {
 
     const custommodule = computed(() =>
         Object.values(moduleStore.custommodules).find(
-            (ccm) => ccm.shorty === key
-        )
+            (ccm) => ccm.shorty === key,
+        ),
     );
 
     const categories = computed(() =>
-        Object.values(categoryStore.customdataCategories).map(transformCategory)
+        Object.values(categoryStore.customdataCategories).map(
+            transformCategory,
+        ),
     );
     const categoryByShorty = (shorty: CustomdataCategory['shorty']) =>
         transformCategory(categoryStore.customdataCategories[shorty]);
@@ -32,13 +34,13 @@ export default function useCustommodule(key: string) {
         };
     };
     const createCategory = async (
-        payload: Partial<Omit<CustomdataCategory, 'id'>>
+        payload: Partial<Omit<CustomdataCategory, 'id'>>,
     ) => {
         if (custommodule.value?.id) {
             try {
                 await categoryStore.createCustomdataCategory(
                     custommodule.value.id,
-                    payload
+                    payload,
                 );
                 successToast('created');
             } catch (error) {
@@ -51,7 +53,7 @@ export default function useCustommodule(key: string) {
             try {
                 await categoryStore.updateCustomdataCategory(
                     custommodule.value.id,
-                    payload
+                    payload,
                 );
                 successToast('saved');
             } catch (error) {
@@ -64,7 +66,7 @@ export default function useCustommodule(key: string) {
             try {
                 await categoryStore.getCustomdataCategory(
                     custommodule.value.id,
-                    id
+                    id,
                 );
             } catch (error) {
                 errorMessage(error);
@@ -78,7 +80,7 @@ export default function useCustommodule(key: string) {
         ) {
             try {
                 await categoryStore.getCustomdataCategories(
-                    custommodule.value.id
+                    custommodule.value.id,
                 );
             } catch (error) {
                 errorMessage(error);
@@ -90,7 +92,7 @@ export default function useCustommodule(key: string) {
             try {
                 await categoryStore.deleteCustomdataCategory(
                     custommodule.value.id,
-                    id
+                    id,
                 );
                 successToast('deleted');
             } catch (error) {
@@ -100,7 +102,7 @@ export default function useCustommodule(key: string) {
     };
 
     const values = computed(() =>
-        Object.values(valueStore.customdataValues).map(transformValue)
+        Object.values(valueStore.customdataValues).map(transformValue),
     );
     const transformValue = (value: CustomdataValue) => ({
         ...JSON.parse(value.value),
@@ -134,7 +136,7 @@ export default function useCustommodule(key: string) {
                 {
                     dataCategoryId: payload.dataCategoryId,
                     value: JSON.stringify(p),
-                }
+                },
             );
             successToast('created');
             return result;
@@ -169,7 +171,7 @@ export default function useCustommodule(key: string) {
             id: CustomdataValue['id'];
             dataCategoryId: CustomdataValue['dataCategoryId'];
             [x: string]: any;
-        }[]
+        }[],
     ) => {
         if (custommodule.value?.id === undefined) {
             return;
@@ -218,7 +220,7 @@ export default function useCustommodule(key: string) {
             try {
                 await valueStore.deleteCustomdataValues(
                     custommodule.value.id,
-                    id
+                    id,
                 );
                 successToast('deleted');
             } catch (error) {

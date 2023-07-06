@@ -70,7 +70,7 @@ const onSave = (close: () => void) => {
             `${oldTask[key] ?? 'Nichts'} => ${
                 internTask.value[key] ?? 'Nichts'
             }`,
-        ])
+        ]),
     );
     updateTask(internTask.value, diffObject);
     if (showBackButton.value) {
@@ -102,7 +102,7 @@ const { loadPersons } = usePersons();
 const subTasks = computed(() =>
     (internTask.value?.subTasks ?? [])
         .map((st) => tasksObject.value[st])
-        .filter((st) => st)
+        .filter((st) => st),
 );
 const subTaskOpen = ref(false);
 const onAddTask = () => {
@@ -110,7 +110,7 @@ const onAddTask = () => {
 };
 const onSubTask = async (value: CustomdataValue) => {
     const subTasks = [...(internTask.value.subTasks ?? [])].filter((sT) =>
-        valueById(String(sT))
+        valueById(String(sT)),
     );
     subTasks.push(value.id);
     const payload = {
@@ -123,7 +123,7 @@ const onSubTask = async (value: CustomdataValue) => {
         diffs.map((key) => [
             key,
             `${oldTask[key] ?? 'Nichts'} => ${payload[key] ?? 'Nichts'}`,
-        ])
+        ]),
     );
     await updateTask(payload, diffObject);
     internTask.value = valueById(taskId.value);

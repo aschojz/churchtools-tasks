@@ -10,7 +10,7 @@ export default function useTags() {
     const tags = computed(() => {
         const tags: TransformedTag[] = values.value.filter(
             (v: TransformedTag) =>
-                v.type === 'tag' && v.dataCategoryId === projectId.value
+                v.type === 'tag' && v.dataCategoryId === projectId.value,
         );
         return Object.fromEntries(tags.map((tag) => [tag.id, tag]));
     });
@@ -19,7 +19,7 @@ export default function useTags() {
             ...tag,
             icon: 'fas fa-circle',
             color: { key: tag.color },
-        }))
+        })),
     );
 
     const createTag = (tag: Tag) => {

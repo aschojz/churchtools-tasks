@@ -9,7 +9,7 @@ const props = withDefaults(
     defineProps<{
         list: Project;
     }>(),
-    { list: () => ({}) }
+    { list: () => ({}) },
 );
 const emit = defineEmits<{
     (event: 'close'): void;

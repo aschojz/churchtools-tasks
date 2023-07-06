@@ -10,7 +10,7 @@ defineEmits<{
 }>();
 const { categories } = useCustommodule(KEY);
 const projects = computed<Project[]>(() =>
-    categories.value.filter((cat) => cat.shorty?.startsWith('project'))
+    categories.value.filter((cat) => cat.shorty?.startsWith('project')),
 );
 </script>
 <template>

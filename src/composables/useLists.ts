@@ -9,7 +9,7 @@ export default function useLists() {
 
     const lists = computed(() => {
         const lists: TransformedList[] = values.value.filter(
-            (v: TransformedList) => v.type === 'list'
+            (v: TransformedList) => v.type === 'list',
         );
         return lists;
     });
