@@ -39,7 +39,14 @@ const onSave = (close: () => void) => {
 const CHARACTERS_QUERY = gql`
     query getIcons($query: String!) {
         search(version: "6.x", query: $query) {
-            id, label, familyStylesByLicense { free { family, style } }
+            id
+            label
+            familyStylesByLicense {
+                free {
+                    family
+                    style
+                }
+            }
         }
     }
 `;
@@ -64,7 +71,20 @@ const onSearchForIcon = (query: string) => {
             <SelectDropdown
                 v-model="proj.icon"
                 label="Icon"
-                :options="(result?.search ?? []).filter(s => s.familyStylesByLicense.free.filter(i => i.style === 'solid').length).map((s) => ({ id: `fas fa-${s.id}`, label: s.label, icon: `fas fa-${s.id}` }))"
+                :options="
+                    (result?.search ?? [])
+                        .filter(
+                            (s) =>
+                                s.familyStylesByLicense.free.filter(
+                                    (i) => i.style === 'solid',
+                                ).length,
+                        )
+                        .map((s) => ({
+                            id: `fas fa-${s.id}`,
+                            label: s.label,
+                            icon: `fas fa-${s.id}`,
+                        }))
+                "
                 note="Nach englischen Bezeichnungen suchen"
                 emit-id
                 :search-function="onSearchForIcon"
