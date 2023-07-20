@@ -5,6 +5,7 @@ import ListView from '@/views/ListView.vue';
 import TagBoard from '@/views/TagBoard.vue';
 import TaskBoard from '@/views/TaskBoard.vue';
 import Overview from '@/views/Overview.vue';
+import MyTasksList from '@/views/MyTasksList.vue';
 
 const routes: RouteRecordRaw[] = [
     {
@@ -27,7 +28,12 @@ const routes: RouteRecordRaw[] = [
                 component: TaskBoard,
             },
             { path: 'board/:taskId?', name: 'project-board', component: Board },
-            { path: '', redirect: { name: 'project-board' }, name: 'project' },
+            {
+                path: 'my-tasks/:taskId?',
+                name: 'my-tasks',
+                component: MyTasksList,
+            },
+            { path: '', redirect: { name: 'my-tasks' }, name: 'project' },
         ],
     },
     { path: '', name: 'overview', component: Overview },

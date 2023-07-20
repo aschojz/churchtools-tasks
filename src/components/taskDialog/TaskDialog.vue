@@ -5,6 +5,7 @@ import {
     DialogLarge,
     Input,
     InputDate,
+    PersonDomainObjectType,
     SelectDropdown,
     Tag,
     Textarea,
@@ -22,6 +23,7 @@ import NewTask from '../NewTask.vue';
 import TagDialog from '../TagDialog.vue';
 import TaskItem from '../TaskItem.vue';
 import Activities from './Activities.vue';
+import { churchtoolsClient } from '@churchtools/churchtools-client';
 
 const { updateTask, taskId, tasksObject, getObjectDiff } = useTasks();
 const { tagsArray } = useTags();
@@ -97,7 +99,7 @@ const resetRoute = () => {
 
 const createTagIsOpen = ref(false);
 
-const { loadPersons } = usePersons();
+const { loadPersons, personById, personStore } = usePersons();
 
 const subTasks = computed(() =>
     (internTask.value?.subTasks ?? [])
@@ -135,6 +137,35 @@ const showBackButton = computed(() => {
 
 const showRelativeDate = ref(false);
 const isSmallScreen = computed(() => window.innerWidth < 768);
+
+const onSearchForPerson = async (query: string) => {
+    const result = await churchtoolsClient.get<PersonDomainObjectType[]>(
+        `/search?query=${query}&domainTypes[]=person`,
+    );
+    return result
+        .filter(
+            (r) =>
+                !internTask.value.assignedTo?.includes(
+                    parseInt(r.domainIdentifier),
+                ),
+        )
+        .map((r) => ({
+            ...r,
+            id: r.domainIdentifier,
+            label: r.title,
+        }));
+};
+const assignees = computed(() =>
+    (internTask.value.assignedTo ?? []).map((id) => ({
+        id,
+        ...personById(id),
+    })),
+);
+
+const onSelectAssignee = (ids: number[]) => {
+    internTask.value.assignedTo = ids.map((id) => parseInt(id));
+    personStore.loadPersons({ ids });
+};
 </script>
 <template>
     <DialogLarge
@@ -230,12 +261,16 @@ const isSmallScreen = computed(() => window.innerWidth < 768);
                     @click="createTagIsOpen = true"
                 />
             </div>
-            <!-- <SelectDropdown
-                v-model="internTask.assignedTo"
+            <SelectDropdown
+                :model-value="assignees"
+                :options="assignees"
                 multiple
                 horizontal
                 label="Assignee"
-            /> -->
+                emit-id
+                :search-function="onSearchForPerson"
+                @update:model-value="onSelectAssignee"
+            />
             <div class="flex flex-col gap-4 md:flex-row">
                 <div class="flex-shrink-0 font-bold md:w-48">Unteraufgaben</div>
                 <div class="flex-grow">

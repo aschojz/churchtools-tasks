@@ -69,9 +69,10 @@ const listIsOpen = ref(false);
             </div>
             <div class="flex justify-between">
                 <div class="tabs flex gap-1">
-                    <RouterLink
-                        v-tippy="'Sortiert nach benutzerdefinierten Listen'"
-                        :to="{ name: 'project-board' }"
+                    <RouterLink :to="{ name: 'my-tasks' }"
+                        >Meine Aufgaben</RouterLink
+                    >
+                    <RouterLink :to="{ name: 'project-board' }"
                         >Board</RouterLink
                     >
                     <RouterLink :to="{ name: 'project-list' }"

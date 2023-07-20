@@ -1,18 +1,27 @@
 <script setup lang="ts">
 import { Button } from 'churchtools-styleguide';
-import { tx } from '@churchtools/utils';
+import { tx, usePersons } from '@churchtools/utils';
 import { computed, ref } from 'vue';
 import ProjectDialog from './components/ProjectDialog.vue';
 import { KEY } from './main';
 import useCustommodules from './custommodule/useCustommodules';
 import useCustommodule from './custommodule/useCustommodule';
+import useTasks from './composables/useTasks';
 
 const { loadModule } = useCustommodules();
 const { loadCategories, loadValues } = useCustommodule(KEY);
+const { loadPersons } = usePersons();
+const { tasks } = useTasks();
+
 const initModule = async () => {
     await loadModule(KEY);
     await loadCategories();
     await loadValues();
+    const assignedIds = tasks.value
+        .map((t) => t.assignedTo)
+        .flat()
+        .filter((t) => t !== undefined);
+    await loadPersons({ ids: assignedIds });
 };
 initModule();
 const onNewProject = () =>

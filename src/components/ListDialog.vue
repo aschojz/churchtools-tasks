@@ -7,7 +7,7 @@ const props = withDefaults(
     defineProps<{
         list: TaskList | TransformedList;
     }>(),
-    { list: () => ({}) as TaskList },
+    { list: () => ({} as TaskList) },
 );
 const emit = defineEmits<{
     (event: 'close'): void;
