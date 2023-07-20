@@ -45,22 +45,23 @@ export default function useTask(taskId: ComputedRef<number> | Ref<number>) {
     );
 
     const { personStore } = usePersons();
-    const assignees = computed(() =>
-        (task.value?.assignedTo ?? [])
-            ?.map((id) => {
-                const p = personStore.persons[id];
-                if (p) {
-                    return {
-                        ...p,
-                        domainType: 'person',
-                        title: [p.firstName, p.lastName]
-                            .filter((t) => !!t)
-                            .join(' '),
-                    };
-                }
-                return { title: '' };
-            })
-            .filter((p) => p.title),
+    const assignees = computed(
+        () =>
+            (task.value?.assignedTo ?? [])
+                ?.map((id) => {
+                    const p = personStore.persons[id];
+                    if (p) {
+                        return {
+                            ...p,
+                            domainType: 'person',
+                            title: [p.firstName, p.lastName]
+                                .filter((t) => !!t)
+                                .join(' '),
+                        };
+                    }
+                    return { title: '' };
+                })
+                .filter((p) => p.title),
     );
 
     const { tags } = useTags();
@@ -90,8 +91,8 @@ export default function useTask(taskId: ComputedRef<number> | Ref<number>) {
     };
     const deleteTask = () => deleteValue(taskId.value);
 
-    const comments = computed(() =>
-        (task.value?.activity ?? [])?.filter((a) => a.type === 'comment'),
+    const comments = computed(
+        () => (task.value?.activity ?? [])?.filter((a) => a.type === 'comment'),
     );
 
     const dueDate = computed(() => calculateDueDate(task.value));
