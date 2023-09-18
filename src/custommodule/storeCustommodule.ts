@@ -36,9 +36,8 @@ export const useCustommoduleStore = defineStore('custommodule', () => {
     const getCustommodules = async () => {
         try {
             loadingState.value = 'LOADING';
-            const result: Custommodule[] = await churchtoolsClient.get(
-                `/custommodules`,
-            );
+            const result: Custommodule[] =
+                await churchtoolsClient.get(`/custommodules`);
             custommodules.value = Object.fromEntries(
                 result.map((r) => [r.id, r]),
             );
